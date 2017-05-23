@@ -99,7 +99,7 @@ public class PayslipRequest {
         try {
             month = Month.valueOf(args[4].toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new PayslipException(args[4] + " is a invalid month", e);
+            throw new PayslipException(args[4] + " is an invalid month", e);
         }
         return new PayslipRequest(firstName, lastName, annualSalary, superRate, month);
     }

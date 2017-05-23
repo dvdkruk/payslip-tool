@@ -60,7 +60,7 @@ public class PayslipRequestTest {
     @Test
     public void parseInvalidMonth() {
         thrown.expect(PayslipException.class);
-        thrown.expectMessage("Peter is a invalid month");
+        thrown.expectMessage("Peter is an invalid month");
         PayslipRequest.parse("Jennifer,Lawrence,1337,10.1%,Peter");
     }
 
