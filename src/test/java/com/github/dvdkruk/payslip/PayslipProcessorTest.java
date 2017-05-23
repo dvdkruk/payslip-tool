@@ -1,8 +1,11 @@
 package com.github.dvdkruk.payslip;
 
+import com.github.dvdkruk.payslip.model.PayslipException;
 import com.github.dvdkruk.payslip.model.PayslipRequest;
 import com.github.dvdkruk.payslip.model.PayslipResult;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.math.BigDecimal;
 import java.time.Month;
@@ -11,59 +14,73 @@ import static org.junit.Assert.assertEquals;
 
 public class PayslipProcessorTest {
 
-    private final PayslipProcessor processor = new PayslipProcessor();
+    @Rule
+    public final ExpectedException thrown = ExpectedException.none();
 
-    @Test
-    public void validateNullRequest() throws Exception {
-        assertEquals("Request is null", processor.validate(null));
-    }
+    private final PayslipProcessor processor = new PayslipProcessor();
 
     @Test
     public void validateFirstNameNull() throws Exception {
         PayslipRequest request = new PayslipRequest(null, null, BigDecimal.TEN, BigDecimal.TEN, Month.JANUARY);
-        assertEquals("First name is null or empty", processor.validate(request));
+        thrown.expect(PayslipException.class);
+        thrown.expectMessage("First name is null or empty");
+        processor.process(request);
     }
 
     @Test
     public void validateFirstNameEmpty() throws Exception {
         PayslipRequest request = new PayslipRequest("", "", BigDecimal.TEN, BigDecimal.TEN, Month.JANUARY);
-        assertEquals("First name is null or empty", processor.validate(request));
+        thrown.expect(PayslipException.class);
+        thrown.expectMessage("First name is null or empty");
+        processor.process(request);
     }
 
     @Test
     public void validateLastNameNull() throws Exception {
         PayslipRequest request = new PayslipRequest("Michael", null, BigDecimal.TEN, BigDecimal.TEN, Month.JANUARY);
-        assertEquals("Last name is null or empty", processor.validate(request));
+        thrown.expect(PayslipException.class);
+        thrown.expectMessage("Last name is null or empty");
+        processor.process(request);
     }
 
     @Test
     public void validateNegativeSalary() throws Exception {
         PayslipRequest request = new PayslipRequest("Michael", "Jackson", new BigDecimal("-100"), BigDecimal.TEN, Month.JANUARY);
-        assertEquals("Annual salary must be bigger than zero", processor.validate(request));
+        thrown.expect(PayslipException.class);
+        thrown.expectMessage("Annual salary must be bigger than zero");
+        processor.process(request);
     }
 
     @Test
     public void validateZeroSalary() throws Exception {
         PayslipRequest request = new PayslipRequest("Michael", "Jackson", BigDecimal.ZERO, BigDecimal.TEN, Month.JANUARY);
-        assertEquals("Annual salary must be bigger than zero", processor.validate(request));
+        thrown.expect(PayslipException.class);
+        thrown.expectMessage("Annual salary must be bigger than zero");
+        processor.process(request);
     }
 
     @Test
     public void validateNegativeSuperRate() throws Exception {
         PayslipRequest request = new PayslipRequest("Michael", "Jackson", BigDecimal.ONE, new BigDecimal("-1"), Month.JANUARY);
-        assertEquals("Super rate must be between 0% - 50%", processor.validate(request));
+        thrown.expect(PayslipException.class);
+        thrown.expectMessage("Super rate must be between 0% - 50%");
+        processor.process(request);
     }
 
     @Test
     public void validateSuperRateTooBig() throws Exception {
         PayslipRequest request = new PayslipRequest("Michael", "Jackson", BigDecimal.ONE, new BigDecimal("50.1"), Month.JANUARY);
-        assertEquals("Super rate must be between 0% - 50%", processor.validate(request));
+        thrown.expect(PayslipException.class);
+        thrown.expectMessage("Super rate must be between 0% - 50%");
+        processor.process(request);
     }
 
     @Test
     public void validateRequest() throws Exception {
         PayslipRequest request = new PayslipRequest("Michael", "Jackson", BigDecimal.ONE, new BigDecimal("50"), Month.DECEMBER);
-        assertEquals("", processor.validate(request));
+        PayslipResult result = processor.process(request);
+        assertEquals("Michael Jackson", result.getFullName());
+        assertEquals(Month.DECEMBER, result.getMonth());
     }
 
     @Test

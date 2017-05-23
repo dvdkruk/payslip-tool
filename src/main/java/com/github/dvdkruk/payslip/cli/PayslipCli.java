@@ -1,8 +1,9 @@
 package com.github.dvdkruk.payslip.cli;
 
 import com.github.dvdkruk.payslip.PayslipProcessor;
+import com.github.dvdkruk.payslip.model.PayslipException;
 import com.github.dvdkruk.payslip.model.PayslipRequest;
-import com.github.dvdkruk.payslip.model.PayslipRequestFormatException;
+import com.github.dvdkruk.payslip.model.PayslipResult;
 
 import java.io.Console;
 import java.util.logging.Level;
@@ -59,13 +60,9 @@ class PayslipCli {
     private void parse(String line) {
         try {
             PayslipRequest request = PayslipRequest.parse(line);
-            String errorMsg = processor.validate(request);
-            if (errorMsg.isEmpty()) {
-                console.writer().println(processor.process(request).toString());
-            } else {
-                console.writer().println(errorMsg);
-            }
-        } catch (PayslipRequestFormatException e) {
+            PayslipResult result = processor.process(request);
+            console.writer().println(result.toString());
+        } catch (PayslipException e) {
             console.writer().println(e.getMessage());
             LOG.log(Level.FINE, e.getMessage(), e);
         }
@@ -75,15 +72,11 @@ class PayslipCli {
         for (int i = 0; i < args.length; i++) {
             try {
                 PayslipRequest request = PayslipRequest.parse(args[i]);
-                String errorMsg = processor.validate(request);
-                if (errorMsg.isEmpty()) {
-                    console.writer().println(processor.process(request).toString());
-                } else {
-                    console.writer().println("(argument: " + i + "): " + errorMsg);
-                }
-            } catch (PayslipRequestFormatException e) {
-                console.writer().println(e.getMessage());
-                LOG.log(Level.FINE, e.getMessage(), e);
+                PayslipResult result = processor.process(request);
+                console.writer().println(result.toString());
+            } catch (PayslipException e) {
+                console.writer().println("(argument: " + i + "): " + e.getMessage());
+                LOG.log(Level.FINE, "(argument: " + i + "): " + e.getMessage(), e);
             }
         }
     }

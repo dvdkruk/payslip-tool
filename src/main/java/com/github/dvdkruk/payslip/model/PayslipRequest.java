@@ -65,11 +65,11 @@ public class PayslipRequest {
      *
      * @param arg a parsable {@code String}
      * @return the payslip request representing by the string argument.
-     * @throws PayslipRequestFormatException if the string does not contain a parsable payslip request.
+     * @throws PayslipException if the string does not contain a parsable payslip request.
      */
     public static PayslipRequest parse(String arg) {
         if (arg == null) {
-            throw new PayslipRequestFormatException("null");
+            throw new PayslipException("null");
         }
         String[] args = Arrays.stream(arg.split(SEPARATOR))
                 .map(String::trim)
@@ -77,7 +77,7 @@ public class PayslipRequest {
                 .toArray(String[]::new);
 
         if (args.length != 5) {
-            throw new PayslipRequestFormatException("a payslip request must consist of 5 (non empty) elements");
+            throw new PayslipException("a payslip request must consist of 5 (non empty) elements");
         }
         return parse(args);
     }
@@ -87,10 +87,10 @@ public class PayslipRequest {
         String lastName = args[1];
         BigDecimal annualSalary = parseToBigDecimal(args[2], "annual salary");
         if (args[3].length() < 2) {
-            throw new PayslipRequestFormatException("super rate must consist of at least one number and a '%' (percent character)");
+            throw new PayslipException("super rate must consist of at least one number and a '%' (percent character)");
         }
         if (args[3].charAt(args[3].length() - 1) != '%') {
-            throw new PayslipRequestFormatException("super rate must be suffixed with a '%' (percent character)");
+            throw new PayslipException("super rate must be suffixed with a '%' (percent character)");
         }
         String superRateArg = args[3].substring(0, args[3].length() - 1);
         BigDecimal superRate = parseToBigDecimal(superRateArg, "super rate");
@@ -99,7 +99,7 @@ public class PayslipRequest {
         try {
             month = Month.valueOf(args[4].toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new PayslipRequestFormatException(args[4] + " is a invalid month", e);
+            throw new PayslipException(args[4] + " is a invalid month", e);
         }
         return new PayslipRequest(firstName, lastName, annualSalary, superRate, month);
     }
@@ -108,7 +108,7 @@ public class PayslipRequest {
         try {
             return new BigDecimal(arg);
         } catch (NumberFormatException e) {
-            throw new PayslipRequestFormatException("cannot parse " + fieldName + " '" + arg + "' into a number", e);
+            throw new PayslipException("cannot parse " + fieldName + " '" + arg + "' into a number", e);
         }
     }
 

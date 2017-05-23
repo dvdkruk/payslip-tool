@@ -59,21 +59,21 @@ public class PayslipRequestTest {
 
     @Test
     public void parseInvalidMonth() {
-        thrown.expect(PayslipRequestFormatException.class);
+        thrown.expect(PayslipException.class);
         thrown.expectMessage("Peter is a invalid month");
         PayslipRequest.parse("Jennifer,Lawrence,1337,10.1%,Peter");
     }
 
     @Test
     public void parseInvalidEmptyArguments() {
-        thrown.expect(PayslipRequestFormatException.class);
+        thrown.expect(PayslipException.class);
         thrown.expectMessage("a payslip request must consist of 5 (non empty) elements");
         PayslipRequest.parse(" , , , , ");
     }
 
     @Test
     public void parseInvalidArgumentAmount() {
-        thrown.expect(PayslipRequestFormatException.class);
+        thrown.expect(PayslipException.class);
         thrown.expectMessage("a payslip request must consist of 5 (non empty) elements");
         PayslipRequest.parse("Jennifer,Lawrence,1337,10.1%");
     }

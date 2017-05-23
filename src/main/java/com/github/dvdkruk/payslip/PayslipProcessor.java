@@ -2,6 +2,7 @@ package com.github.dvdkruk.payslip;
 
 
 import com.github.dvdkruk.payslip.model.IncomeTaxRule;
+import com.github.dvdkruk.payslip.model.PayslipException;
 import com.github.dvdkruk.payslip.model.PayslipRequest;
 import com.github.dvdkruk.payslip.model.PayslipResult;
 
@@ -32,46 +33,41 @@ public class PayslipProcessor {
     }
 
     /**
-     * Validates the request argument. Returns an empty {@code String} when valid, else
-     * an error message.
-     *
-     * @param request a {@code PayslipRequest} needed to be validated
-     * @return an empty {@code String} when valid, else an error message
-     */
-    public String validate(PayslipRequest request) {
-        if (request == null) {
-            return "Request is null";
-        }
-        if (request.getFirstName() == null || request.getFirstName().isEmpty()) {
-            return "First name is null or empty";
-        }
-        if (request.getLastName() == null || request.getLastName().isEmpty()) {
-            return "Last name is null or empty";
-        }
-        if (request.getAnnualSalary().compareTo(BigDecimal.ZERO) <= 0) {
-            return "Annual salary must be bigger than zero";
-        }
-        if (request.getSuperRate() == null) {
-            return "Super rate is null";
-        }
-        if (request.getSuperRate().compareTo(MIN_SUPER_RATE) < 0 || request.getSuperRate().compareTo(MAX_SUPER_RATE) > 0) {
-            return "Super rate must be between 0% - 50%";
-        }
-        return "";
-    }
-
-    /**
      * Processes the request argument as a payslip result.
      *
      * @param request a payslip request.
      * @return the result of the request argument.
+     * @throws PayslipException if the request is not valid.
      */
     public PayslipResult process(PayslipRequest request) {
+        validate(request);
+
         int grossIncome = request.getAnnualSalary().divide(AMOUNT_OF_MONTHS, 0, RoundingMode.HALF_UP).intValueExact();
         int incomeTax = calculateIncomeTax(request.getAnnualSalary().intValueExact());
         int monthlySuper = calculateMonthlySuper(grossIncome, request.getSuperRate());
 
         return new PayslipResult(request.getFullName(), request.getMonth(), grossIncome, incomeTax, monthlySuper);
+    }
+
+    private void validate(PayslipRequest request) {
+        if (request == null) {
+            throw new PayslipException("Request is null");
+        }
+        if (request.getFirstName() == null || request.getFirstName().isEmpty()) {
+            throw new PayslipException("First name is null or empty");
+        }
+        if (request.getLastName() == null || request.getLastName().isEmpty()) {
+            throw new PayslipException("Last name is null or empty");
+        }
+        if (request.getAnnualSalary().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new PayslipException("Annual salary must be bigger than zero");
+        }
+        if (request.getSuperRate() == null) {
+            throw new PayslipException("Super rate is null");
+        }
+        if (request.getSuperRate().compareTo(MIN_SUPER_RATE) < 0 || request.getSuperRate().compareTo(MAX_SUPER_RATE) > 0) {
+            throw new PayslipException("Super rate must be between 0% - 50%");
+        }
     }
 
     private int calculateMonthlySuper(int grossIncome, BigDecimal superRate) {
