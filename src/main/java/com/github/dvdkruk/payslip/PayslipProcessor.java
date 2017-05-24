@@ -75,11 +75,11 @@ public class PayslipProcessor {
         return monthlySuper.toBigInteger().intValueExact();
     }
 
-    private int calculateIncomeTax(int grossIncome) {
+    private int calculateIncomeTax(int annualSalary) {
         int previousRange = 0;
         for (IncomeTaxRule taxRule : taxRules) {
-            if (grossIncome <= taxRule.getMaxRange()) {
-                BigDecimal taxableOverBase = BigDecimal.valueOf(grossIncome - (long) previousRange);
+            if (annualSalary <= taxRule.getMaxRange()) {
+                BigDecimal taxableOverBase = BigDecimal.valueOf(annualSalary - (long) previousRange);
                 BigDecimal incomeTax = taxableOverBase.multiply(taxRule.getTaxPerDollar())
                         .add(BigDecimal.valueOf(taxRule.getBaseTax()))
                         .divide(AMOUNT_OF_MONTHS, 0, RoundingMode.HALF_UP);
@@ -87,6 +87,6 @@ public class PayslipProcessor {
             }
             previousRange = taxRule.getMaxRange();
         }
-        throw new NoSuchElementException("No tax rule found for gross income '" + grossIncome + "'");
+        throw new NoSuchElementException("No tax rule found for annual salary '" + annualSalary + "'");
     }
 }
