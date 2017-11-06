@@ -49,9 +49,7 @@
                     <license>file:${basedir}/src/main/resources/LICENSE.txt</license>
                     <excludes>
                         <exclude>checkstyle:/src/test/.*</exclude>
-                        <exclude>checkstyle:/src/main/java/com/github/dvdkruk/payslip/cli/.*</exclude>
                         <exclude>checkstyle:/src/main/java/com/github/dvdkruk/payslip/model/.*</exclude>
-                        <exclude>pmd:/src/main/java/com/github/dvdkruk/payslip/cli/.*</exclude>
                         <exclude>pmd:/src/main/java/com/github/dvdkruk/payslip/model/.*</exclude>
                         <exclude>pmd:/src/test/.*</exclude>
                     </excludes>
