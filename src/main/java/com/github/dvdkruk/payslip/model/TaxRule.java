@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 /**
  * Represents an income tax rule for tax calculations used in {@code PayslipProcessor}.
  */
-public class IncomeTaxRule {
+public class TaxRule {
 
     private final int maxRange;
 
@@ -13,7 +13,7 @@ public class IncomeTaxRule {
 
     private final BigDecimal taxPerDollar;
 
-    public IncomeTaxRule(int maxRange, int baseTax, BigDecimal taxPerDollar) {
+    TaxRule(int maxRange, int baseTax, BigDecimal taxPerDollar) {
         this.maxRange = maxRange;
         this.baseTax = baseTax;
         this.taxPerDollar = taxPerDollar;

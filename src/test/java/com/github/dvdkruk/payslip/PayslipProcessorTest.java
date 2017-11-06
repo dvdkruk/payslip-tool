@@ -47,7 +47,7 @@ public class PayslipProcessorTest {
     public void validateNegativeSalary() throws Exception {
         PayslipRequest request = new PayslipRequest("Michael", "Jackson", new BigDecimal("-100"), BigDecimal.TEN, Month.JANUARY);
         thrown.expect(PayslipException.class);
-        thrown.expectMessage("Annual salary must be bigger than zero");
+        thrown.expectMessage("Salary must be bigger than zero");
         processor.process(request);
     }
 
@@ -55,7 +55,7 @@ public class PayslipProcessorTest {
     public void validateZeroSalary() throws Exception {
         PayslipRequest request = new PayslipRequest("Michael", "Jackson", BigDecimal.ZERO, BigDecimal.TEN, Month.JANUARY);
         thrown.expect(PayslipException.class);
-        thrown.expectMessage("Annual salary must be bigger than zero");
+        thrown.expectMessage("Salary must be bigger than zero");
         processor.process(request);
     }
 

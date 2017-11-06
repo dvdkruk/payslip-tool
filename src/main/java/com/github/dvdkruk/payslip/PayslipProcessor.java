@@ -1,19 +1,25 @@
+/**
+ * Copyright (c) 2017, Damiaan van der Kruk.
+ */
 package com.github.dvdkruk.payslip;
 
-
-import com.github.dvdkruk.payslip.model.IncomeTaxRule;
 import com.github.dvdkruk.payslip.model.PayslipException;
 import com.github.dvdkruk.payslip.model.PayslipRequest;
 import com.github.dvdkruk.payslip.model.PayslipResult;
-
+import com.github.dvdkruk.payslip.model.TaxRule;
+import com.github.dvdkruk.payslip.model.TaxRuleHelper;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
- * Payslip processor - Processes {@code PayslipRequest} instance to {@code PayslipResult}.
+ * Payslip processor - Processes {@code PayslipRequest} instance to {@code
+ * PayslipResult}.
+ *
+ * @author Damiaan Van Der Kruk (Damiaan.van.der.Kruk@gmail.com)
+ * @version $Id$
+ * @since 1.0
  */
 public class PayslipProcessor {
 
@@ -21,92 +27,105 @@ public class PayslipProcessor {
     private static final BigDecimal HUNDRED = new BigDecimal("100");
     private static final BigDecimal MIN_SUPER_RATE = new BigDecimal("0");
     private static final BigDecimal MAX_SUPER_RATE = new BigDecimal("50");
-    private final List<IncomeTaxRule> taxRules = new ArrayList<>();
+    private static final int SCALE = 99;
 
-    public PayslipProcessor() {
-        //init tax rules
-        taxRules.add(new IncomeTaxRule(18200, 0, BigDecimal.ZERO));
-        taxRules.add(new IncomeTaxRule(37000, 0, new BigDecimal("0.190")));
-        taxRules.add(new IncomeTaxRule(80000, 3572, new BigDecimal("0.325")));
-        taxRules.add(new IncomeTaxRule(180000, 17547, new BigDecimal("0.37")));
-        taxRules.add(new IncomeTaxRule(Integer.MAX_VALUE, 54547, new BigDecimal("0.45")));
-    }
+    private final List<TaxRule> rules = TaxRuleHelper.getDefaultTaxRules();
 
     /**
      * Processes the request argument as a payslip result.
      *
-     * @param request a payslip request.
-     * @return the result of the request argument.
-     * @throws PayslipException if the request is not valid.
+     * @param request A payslip request.
+     * @return The result of the request argument.
+     * @throws PayslipException If the request is not valid.
      */
-    public PayslipResult process(PayslipRequest request) {
+    public final PayslipResult process(final PayslipRequest request) {
         validate(request);
-
-        int grossIncome = request.getAnnualSalary().divide(AMOUNT_OF_MONTHS, 0, RoundingMode.HALF_UP).intValueExact();
-        int incomeTax = calculateIncomeTax(request.getAnnualSalary().intValueExact());
-        int monthlySuper = calculateMonthlySuper(grossIncome, request.getSuperRate());
-
-        return new PayslipResult(request.getFullName(), request.getMonth(), grossIncome, incomeTax, monthlySuper);
+        final int income = request.getAnnualSalary()
+            .divide(AMOUNT_OF_MONTHS, 0, RoundingMode.HALF_UP)
+            .intValueExact();
+        final int tax = this.calculateTax(
+            request.getAnnualSalary().intValueExact()
+        );
+        final int superann = calculateSuper(income, request.getSuperRate());
+        return new PayslipResult(
+            request.getFullName(), request.getMonth(),
+            income, tax, superann
+        );
     }
 
-    private void validate(PayslipRequest request) {
+    private static void validate(final PayslipRequest request) {
         if (request == null) {
             throw new PayslipException("Request is null");
         }
-        if (request.getFirstName() == null || request.getFirstName().isEmpty()) {
+        if (request.getFirstName() == null
+            || request.getFirstName().isEmpty()) {
             throw new PayslipException("First name is null or empty");
         }
         if (request.getLastName() == null || request.getLastName().isEmpty()) {
             throw new PayslipException("Last name is null or empty");
         }
         if (request.getAnnualSalary().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new PayslipException("Annual salary must be bigger than zero");
+            throw new PayslipException("Salary must be bigger than zero");
         }
         if (request.getSuperRate() == null) {
             throw new PayslipException("Super rate is null");
         }
-        if (request.getSuperRate().compareTo(MIN_SUPER_RATE) < 0 || request.getSuperRate().compareTo(MAX_SUPER_RATE) > 0) {
+        if (request.getSuperRate().compareTo(MIN_SUPER_RATE) < 0
+            || request.getSuperRate().compareTo(MAX_SUPER_RATE) > 0) {
             throw new PayslipException("Super rate must be between 0% - 50%");
         }
     }
 
-    private int calculateMonthlySuper(int grossIncome, BigDecimal superRate) {
-        BigDecimal monthlySuper = superRate.divide(HUNDRED, 99, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(grossIncome));
-        return monthlySuper.toBigInteger().intValueExact();
+    private static int calculateSuper(final int income, final BigDecimal rate) {
+        return rate.divide(HUNDRED, SCALE, BigDecimal.ROUND_HALF_UP)
+            .multiply(BigDecimal.valueOf(income))
+            .toBigInteger()
+            .intValueExact();
     }
 
-    private int calculateIncomeTax(int salary) {
-        IncomeTaxRule firstRule = taxRules.get(0);
-        if (salary > firstRule.getMaxRange()) {
-            return calculateIncomeTax(salary, 1);
+    private int calculateTax(final int salary) {
+        final TaxRule rule = this.rules.get(0);
+        final int tax;
+        if (salary > rule.getMaxRange()) {
+            tax = calculateTax(salary, 1);
+        } else {
+            tax = calculateTax(salary, rule);
         }
-
-        return calculateIncomeTax(salary, firstRule);
+        return tax;
     }
 
-    private int calculateIncomeTax(int salary, int index) {
-        if (index >= taxRules.size()) {
-            throw new NoSuchElementException("No tax rule found for annual salary '" + salary + "'");
+    private int calculateTax(final int salary, final int index) {
+        if (index >= this.rules.size()) {
+            final String msg = String.format(
+                "No tax rule found for annual salary '%s'",
+                salary
+            );
+            throw new NoSuchElementException(msg);
         }
-
-        IncomeTaxRule rule = taxRules.get(index);
-        if(salary > rule.getMaxRange()) {
-            return calculateIncomeTax(salary, ++index);
+        final TaxRule rule = this.rules.get(index);
+        final int tax;
+        if (salary > rule.getMaxRange()) {
+            tax = calculateTax(salary, index + 1);
+        } else {
+            final TaxRule previous = this.rules.get(index - 1);
+            tax = calculateTax(salary, rule, previous);
         }
-
-        IncomeTaxRule previous = taxRules.get(index - 1);
-        return calculateIncomeTax(salary, rule, previous);
+        return tax;
     }
 
-    private int calculateIncomeTax(int annualSalary, IncomeTaxRule rule, IncomeTaxRule previous) {
-        return calculateIncomeTax(annualSalary - previous.getMaxRange(), rule);
+    private static int calculateTax(final int salary, final TaxRule... rules) {
+        if (rules.length > 2) {
+            throw new IllegalArgumentException("Only 2 rules are allowed");
+        }
+        final int taxable = salary - rules[1].getMaxRange();
+        return calculateTax(taxable, rules[0]);
     }
 
-    private int calculateIncomeTax(int annualSalary, IncomeTaxRule rule) {
-        return BigDecimal.valueOf(annualSalary)
-                .multiply(rule.getTaxPerDollar())
-                .add(BigDecimal.valueOf(rule.getBaseTax()))
-                .divide(AMOUNT_OF_MONTHS, 0, RoundingMode.HALF_UP)
-                .intValueExact();
+    private static int calculateTax(final int salary, final TaxRule rule) {
+        return BigDecimal.valueOf(salary)
+            .multiply(rule.getTaxPerDollar())
+            .add(BigDecimal.valueOf(rule.getBaseTax()))
+            .divide(AMOUNT_OF_MONTHS, 0, RoundingMode.HALF_UP)
+            .intValueExact();
     }
 }
