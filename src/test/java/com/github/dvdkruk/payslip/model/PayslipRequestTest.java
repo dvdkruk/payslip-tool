@@ -24,7 +24,7 @@ public class PayslipRequestTest {
         assertEquals("Leonardo", leonardo.getFirstName());
         assertEquals("DiCaprio", leonardo.getLastName());
         assertEquals("Leonardo DiCaprio", leonardo.getFullName());
-        assertEquals(new BigDecimal("25000000"), leonardo.getAnnualSalary());
+        assertEquals(new BigDecimal("25000000"), leonardo.getSalary());
         assertEquals(new BigDecimal("50"), leonardo.getSuperRate());
         assertEquals(Month.DECEMBER, leonardo.getMonth());
     }
@@ -52,7 +52,7 @@ public class PayslipRequestTest {
         PayslipRequest jennifer = PayslipRequest.parse("Jennifer,Lawrence,1337,10.1%,March");
         assertEquals("Jennifer", jennifer.getFirstName());
         assertEquals("Lawrence", jennifer.getLastName());
-        assertEquals(new BigDecimal("1337"), jennifer.getAnnualSalary());
+        assertEquals(new BigDecimal("1337"), jennifer.getSalary());
         assertEquals(new BigDecimal("10.1"), jennifer.getSuperRate());
         assertEquals(Month.MARCH, jennifer.getMonth());
     }

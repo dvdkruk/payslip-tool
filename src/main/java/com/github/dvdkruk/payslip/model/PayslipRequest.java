@@ -97,7 +97,7 @@ public class PayslipRequest {
 
         Month month;
         try {
-            month = Month.valueOf(args[4].toUpperCase());
+            month = Month.valueOf(args[4].toUpperCase(Locale.getDefault()));
         } catch (IllegalArgumentException e) {
             throw new PayslipException(args[4] + " is an invalid month", e);
         }
@@ -153,7 +153,7 @@ public class PayslipRequest {
         return lastName;
     }
 
-    public BigDecimal getAnnualSalary() {
+    public BigDecimal getSalary() {
         return annualSalary;
     }
 
