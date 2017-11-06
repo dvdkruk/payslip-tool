@@ -75,18 +75,38 @@ public class PayslipProcessor {
         return monthlySuper.toBigInteger().intValueExact();
     }
 
-    private int calculateIncomeTax(int annualSalary) {
-        int previousRange = 0;
-        for (IncomeTaxRule taxRule : taxRules) {
-            if (annualSalary <= taxRule.getMaxRange()) {
-                BigDecimal taxableOverBase = BigDecimal.valueOf(annualSalary - (long) previousRange);
-                BigDecimal incomeTax = taxableOverBase.multiply(taxRule.getTaxPerDollar())
-                        .add(BigDecimal.valueOf(taxRule.getBaseTax()))
-                        .divide(AMOUNT_OF_MONTHS, 0, RoundingMode.HALF_UP);
-                return incomeTax.intValueExact();
-            }
-            previousRange = taxRule.getMaxRange();
+    private int calculateIncomeTax(int salary) {
+        IncomeTaxRule firstRule = taxRules.get(0);
+        if (salary > firstRule.getMaxRange()) {
+            return calculateIncomeTax(salary, 1);
         }
-        throw new NoSuchElementException("No tax rule found for annual salary '" + annualSalary + "'");
+
+        return calculateIncomeTax(salary, firstRule);
+    }
+
+    private int calculateIncomeTax(int salary, int index) {
+        if (index >= taxRules.size()) {
+            throw new NoSuchElementException("No tax rule found for annual salary '" + salary + "'");
+        }
+
+        IncomeTaxRule rule = taxRules.get(index);
+        if(salary > rule.getMaxRange()) {
+            return calculateIncomeTax(salary, ++index);
+        }
+
+        IncomeTaxRule previous = taxRules.get(index - 1);
+        return calculateIncomeTax(salary, rule, previous);
+    }
+
+    private int calculateIncomeTax(int annualSalary, IncomeTaxRule rule, IncomeTaxRule previous) {
+        return calculateIncomeTax(annualSalary - previous.getMaxRange(), rule);
+    }
+
+    private int calculateIncomeTax(int annualSalary, IncomeTaxRule rule) {
+        return BigDecimal.valueOf(annualSalary)
+                .multiply(rule.getTaxPerDollar())
+                .add(BigDecimal.valueOf(rule.getBaseTax()))
+                .divide(AMOUNT_OF_MONTHS, 0, RoundingMode.HALF_UP)
+                .intValueExact();
     }
 }
