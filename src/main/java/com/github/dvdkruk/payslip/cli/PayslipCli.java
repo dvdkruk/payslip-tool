@@ -25,15 +25,6 @@ final class PayslipCli {
      */
     private static final Logger LOG =
         Logger.getLogger(PayslipCli.class.getName());
-    /**
-     * Input format.
-     */
-    private static final String INPUT_FORMAT =
-        "<first_name>,<last_name>,<annual_salary>,<super_rate>%,<month>";
-    /**
-     * Example input string.
-     */
-    private static final String EXAMPLE = "David,Rudd,60050,9%,March";
 
     /**
      * Payslip processor.
@@ -74,12 +65,7 @@ final class PayslipCli {
      * Executed the interactive mode.
      */
     private void runInteractiveMode() {
-        final PrintWriter writer = this.console.writer();
-        writer.println("Employee Monthly Payslip Tool - Interactive Mode");
-        writer.println(String
-            .format("Request format: %s", PayslipCli.INPUT_FORMAT)
-        );
-        writer.println(String.format("For example: %s%n", PayslipCli.EXAMPLE));
+        this.printInteractiveModeText();
         boolean running = true;
         do {
             final String line = this.console.readLine();
@@ -91,6 +77,19 @@ final class PayslipCli {
                 }
             }
         } while (running);
+    }
+
+    /**
+     * Prints the interactive mode helper text.
+     */
+    private void printInteractiveModeText() {
+        final PrintWriter writer = this.console.writer();
+        writer.println("Employee Monthly Payslip Tool - Interactive Mode");
+        final String format =
+            "<first_name>,<last_name>,<annual_salary>,<super_rate>%,<month>";
+        writer.println(String.format("Request format: %s", format));
+        final String example = "David,Rudd,60050,9%,March";
+        writer.println(String.format("For example: %s%n", example));
     }
 
     /**
