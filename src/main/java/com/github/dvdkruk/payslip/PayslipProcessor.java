@@ -167,7 +167,7 @@ public class PayslipProcessor {
         final TaxRule rule = this.rules.get(0);
         final int tax;
         if (salary > rule.getMax()) {
-            tax = calculateTax(salary, 1);
+            tax = this.calculateTax(salary, 1, rule.getMax());
         } else {
             tax = calculateTax(salary, rule);
         }
@@ -180,9 +180,13 @@ public class PayslipProcessor {
      *
      * @param salary The salary for the tax calculation.
      * @param index The index of the rule for usage in the calculation.
+     * @param subtract The subtract this amount before tax calculation.
      * @return Tax in complete/whole digits.
      */
-    private int calculateTax(final int salary, final int index) {
+    private int calculateTax(
+        final int salary,
+        final int index,
+        final int subtract) {
         if (index >= this.rules.size()) {
             final String msg = String.format(
                 "No tax rule found for annual salary '%s'",
@@ -193,28 +197,12 @@ public class PayslipProcessor {
         final TaxRule rule = this.rules.get(index);
         final int tax;
         if (salary > rule.getMax()) {
-            tax = calculateTax(salary, index + 1);
+            tax = this.calculateTax(salary, index + 1, rule.getMax());
         } else {
-            final TaxRule previous = this.rules.get(index - 1);
-            tax = calculateTax(salary, rule, previous);
+            final int taxable = salary - subtract;
+            tax = calculateTax(taxable, rule);
         }
         return tax;
-    }
-
-    /**
-     * Calculates the tax for given salary using the given rules. Two rules
-     * need to be provided for this method.
-     *
-     * @param salary The salary for the tax calculation.
-     * @param rules The rules for the tax calculation.
-     * @return Tax in complete/whole digits.
-     */
-    private static int calculateTax(final int salary, final TaxRule... rules) {
-        if (rules.length != 2) {
-            throw new IllegalArgumentException("2 rules need to be provided");
-        }
-        final int taxable = salary - rules[1].getMax();
-        return calculateTax(taxable, rules[0]);
     }
 
     /**
