@@ -144,7 +144,7 @@ public class PayslipProcessor {
     private int calculateTax(final int salary) {
         final TaxRule rule = this.rules.get(0);
         final int tax;
-        if (salary > rule.getMaxRange()) {
+        if (salary > rule.getMax()) {
             tax = calculateTax(salary, 1);
         } else {
             tax = calculateTax(salary, rule);
@@ -170,7 +170,7 @@ public class PayslipProcessor {
         }
         final TaxRule rule = this.rules.get(index);
         final int tax;
-        if (salary > rule.getMaxRange()) {
+        if (salary > rule.getMax()) {
             tax = calculateTax(salary, index + 1);
         } else {
             final TaxRule previous = this.rules.get(index - 1);
@@ -191,7 +191,7 @@ public class PayslipProcessor {
         if (rules.length != 2) {
             throw new IllegalArgumentException("2 rules need to be provided");
         }
-        final int taxable = salary - rules[1].getMaxRange();
+        final int taxable = salary - rules[1].getMax();
         return calculateTax(taxable, rules[0]);
     }
 
@@ -206,8 +206,8 @@ public class PayslipProcessor {
     private static int calculateTax(final int salary, final TaxRule rule) {
         final RoundingMode rounding = RoundingMode.HALF_UP;
         return BigDecimal.valueOf(salary)
-            .multiply(rule.getTaxPerDollar())
-            .add(BigDecimal.valueOf(rule.getBaseTax()))
+            .multiply(rule.getTax())
+            .add(BigDecimal.valueOf(rule.getBase()))
             .divide(PayslipProcessor.AMOUNT_OF_MONTHS, 0, rounding)
             .intValueExact();
     }

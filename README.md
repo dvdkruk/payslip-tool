@@ -27,4 +27,15 @@ $ java -jar ./payslip-tool-1.0-SNAPSHOT.jar David,Rudd,60050,9%,March Ryan,Chen,
 - Java 8
 - Maven 3
 - Junit 4
+- Qulice 1.7
+
+## Qulice
+### Rules I Didn't Like
+- JavadocMethodCheck -> JavaDoc for all methods and all viability scopes. Makes code very verbose especially for normal getter and setters.
+- LineLengthCheck -> Max length is 80 chars, nowadays 120 should be oke.
+
+### Rules I'm Not Sure I Like
+- ParameterNameCheck -> Must be alphanumeric lowercase and at least 3 chars long. `int i = 0` for loops is not allowed, also camelcase in variable names is not allowed (which is maybe a good thing).
+
+
 
