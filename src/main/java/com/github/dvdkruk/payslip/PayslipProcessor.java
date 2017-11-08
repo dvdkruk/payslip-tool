@@ -68,8 +68,10 @@ public class PayslipProcessor {
      * @return Monthly financial information.
      */
     private FinancialInformation calculate(final PayslipRequest request) {
-        final int income = calculateIncome(request.getSalary());
-        final int tax = this.calculateTax(request.getSalary().intValueExact());
+        final int income = calculateIncome(request.getAnnualSalary());
+        final int tax = this.calculateTax(
+            request.getAnnualSalary().intValueExact()
+        );
         final int superann = calculateSuper(income, request.getSuperRate());
         return new FinancialInformation(income, tax, superann);
     }
@@ -95,13 +97,13 @@ public class PayslipProcessor {
         if (request == null) {
             throw new PayslipException("Request is null");
         }
-        if (isNullOrEmpty(request.getFirstName())) {
+        if (isNullOrEmpty(request.getForename())) {
             throw new PayslipException("First name is null or empty");
         }
-        if (isNullOrEmpty(request.getLastName())) {
+        if (isNullOrEmpty(request.getSurname())) {
             throw new PayslipException("Last name is null or empty");
         }
-        if (request.getSalary().compareTo(BigDecimal.ZERO) <= 0) {
+        if (request.getAnnualSalary().compareTo(BigDecimal.ZERO) <= 0) {
             throw new PayslipException("Salary must be bigger than zero");
         }
         if (request.getSuperRate() == null) {

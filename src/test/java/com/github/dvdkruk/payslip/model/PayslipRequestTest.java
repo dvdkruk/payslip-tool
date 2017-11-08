@@ -15,16 +15,40 @@ public class PayslipRequestTest {
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
 
-    private final PayslipRequest leonardo = new PayslipRequest("Leonardo", "DiCaprio", new BigDecimal("25000000"), new BigDecimal("50"), Month.DECEMBER);
-    private final PayslipRequest meryl0 = new PayslipRequest("Meryl", "Streep", new BigDecimal("10000000"), new BigDecimal("20"), Month.JANUARY);
-    private final PayslipRequest meryl1 = new PayslipRequest("Meryl", "Streep", new BigDecimal("10000000"), new BigDecimal("20"), Month.JANUARY);
+    private final PayslipRequest leonardo = new PayslipRequest(
+        new Employee(
+            "Leonardo",
+            "DiCaprio",
+            new BigDecimal("25000000")
+        ),
+        new BigDecimal("50"),
+        Month.DECEMBER
+    );
+    private final PayslipRequest meryl0 = new PayslipRequest(
+        new Employee(
+            "Meryl",
+            "Streep",
+            new BigDecimal("10000000")
+        ),
+        new BigDecimal("20"),
+        Month.JANUARY
+    );
+    private final PayslipRequest meryl1 = new PayslipRequest(
+        new Employee(
+            "Meryl",
+            "Streep",
+            new BigDecimal("10000000")
+        ),
+        new BigDecimal("20"),
+        Month.JANUARY
+    );
 
     @Test
     public void normalRequest() throws Exception {
-        assertEquals("Leonardo", leonardo.getFirstName());
-        assertEquals("DiCaprio", leonardo.getLastName());
+        assertEquals("Leonardo", leonardo.getForename());
+        assertEquals("DiCaprio", leonardo.getSurname());
         assertEquals("Leonardo DiCaprio", leonardo.getFullName());
-        assertEquals(new BigDecimal("25000000"), leonardo.getSalary());
+        assertEquals(new BigDecimal("25000000"), leonardo.getAnnualSalary());
         assertEquals(new BigDecimal("50"), leonardo.getSuperRate());
         assertEquals(Month.DECEMBER, leonardo.getMonth());
     }
@@ -50,9 +74,9 @@ public class PayslipRequestTest {
     @Test
     public void parseTest() {
         PayslipRequest jennifer = PayslipRequest.parse("Jennifer,Lawrence,1337,10.1%,March");
-        assertEquals("Jennifer", jennifer.getFirstName());
-        assertEquals("Lawrence", jennifer.getLastName());
-        assertEquals(new BigDecimal("1337"), jennifer.getSalary());
+        assertEquals("Jennifer", jennifer.getForename());
+        assertEquals("Lawrence", jennifer.getSurname());
+        assertEquals(new BigDecimal("1337"), jennifer.getAnnualSalary());
         assertEquals(new BigDecimal("10.1"), jennifer.getSuperRate());
         assertEquals(Month.MARCH, jennifer.getMonth());
     }

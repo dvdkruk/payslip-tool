@@ -1,7 +1,9 @@
 package com.github.dvdkruk.payslip;
 
+import com.github.dvdkruk.payslip.model.Employee;
 import com.github.dvdkruk.payslip.model.PayslipException;
 import com.github.dvdkruk.payslip.model.PayslipRequest;
+import com.github.dvdkruk.payslip.model.PayslipRequestTest;
 import com.github.dvdkruk.payslip.model.PayslipResult;
 import org.junit.Rule;
 import org.junit.Test;
@@ -14,6 +16,8 @@ import static org.junit.Assert.assertEquals;
 
 public class PayslipProcessorTest {
 
+    private static final BigDecimal NEGATIVE = new BigDecimal("-100");
+
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
 
@@ -21,7 +25,11 @@ public class PayslipProcessorTest {
 
     @Test
     public void validateFirstNameNull() throws Exception {
-        PayslipRequest request = new PayslipRequest(null, null, BigDecimal.TEN, BigDecimal.TEN, Month.JANUARY);
+        PayslipRequest request = new PayslipRequest(
+            new Employee(null, null, BigDecimal.TEN),
+            BigDecimal.TEN,
+            Month.JANUARY
+        );
         thrown.expect(PayslipException.class);
         thrown.expectMessage("First name is null or empty");
         processor.process(request);
@@ -29,7 +37,11 @@ public class PayslipProcessorTest {
 
     @Test
     public void validateFirstNameEmpty() throws Exception {
-        PayslipRequest request = new PayslipRequest("", "", BigDecimal.TEN, BigDecimal.TEN, Month.JANUARY);
+        PayslipRequest request = new PayslipRequest(
+            new Employee("", "", BigDecimal.TEN),
+            BigDecimal.TEN,
+            Month.JANUARY
+        );
         thrown.expect(PayslipException.class);
         thrown.expectMessage("First name is null or empty");
         processor.process(request);
@@ -37,7 +49,11 @@ public class PayslipProcessorTest {
 
     @Test
     public void validateLastNameNull() throws Exception {
-        PayslipRequest request = new PayslipRequest("Michael", null, BigDecimal.TEN, BigDecimal.TEN, Month.JANUARY);
+        PayslipRequest request = new PayslipRequest(
+            new Employee("Michael", null, BigDecimal.TEN),
+            BigDecimal.TEN,
+            Month.JANUARY
+        );
         thrown.expect(PayslipException.class);
         thrown.expectMessage("Last name is null or empty");
         processor.process(request);
@@ -45,7 +61,15 @@ public class PayslipProcessorTest {
 
     @Test
     public void validateNegativeSalary() throws Exception {
-        PayslipRequest request = new PayslipRequest("Michael", "Jackson", new BigDecimal("-100"), BigDecimal.TEN, Month.JANUARY);
+        PayslipRequest request = new PayslipRequest(
+            new Employee(
+                "Michael",
+                "Jackson",
+                PayslipProcessorTest.NEGATIVE
+            ),
+            BigDecimal.TEN,
+            Month.JANUARY
+        );
         thrown.expect(PayslipException.class);
         thrown.expectMessage("Salary must be bigger than zero");
         processor.process(request);
@@ -53,7 +77,11 @@ public class PayslipProcessorTest {
 
     @Test
     public void validateZeroSalary() throws Exception {
-        PayslipRequest request = new PayslipRequest("Michael", "Jackson", BigDecimal.ZERO, BigDecimal.TEN, Month.JANUARY);
+        PayslipRequest request = new PayslipRequest(
+            new Employee("Michael", "Jackson", BigDecimal.ZERO),
+            BigDecimal.TEN,
+            Month.JANUARY
+        );
         thrown.expect(PayslipException.class);
         thrown.expectMessage("Salary must be bigger than zero");
         processor.process(request);
@@ -61,7 +89,11 @@ public class PayslipProcessorTest {
 
     @Test
     public void validateNegativeSuperRate() throws Exception {
-        PayslipRequest request = new PayslipRequest("Michael", "Jackson", BigDecimal.ONE, new BigDecimal("-1"), Month.JANUARY);
+        PayslipRequest request = new PayslipRequest(
+            new Employee("Michael", "Jackson", BigDecimal.ONE),
+            new BigDecimal("-1"),
+            Month.JANUARY
+        );
         thrown.expect(PayslipException.class);
         thrown.expectMessage("Super rate must be between 0% - 50%");
         processor.process(request);
@@ -69,7 +101,11 @@ public class PayslipProcessorTest {
 
     @Test
     public void validateSuperRateTooBig() throws Exception {
-        PayslipRequest request = new PayslipRequest("Michael", "Jackson", BigDecimal.ONE, new BigDecimal("50.1"), Month.JANUARY);
+        PayslipRequest request = new PayslipRequest(
+            new Employee("Michael", "Jackson", BigDecimal.ONE),
+            new BigDecimal("50.1"),
+            Month.JANUARY
+        );
         thrown.expect(PayslipException.class);
         thrown.expectMessage("Super rate must be between 0% - 50%");
         processor.process(request);
@@ -77,7 +113,11 @@ public class PayslipProcessorTest {
 
     @Test
     public void validateRequest() throws Exception {
-        PayslipRequest request = new PayslipRequest("Michael", "Jackson", BigDecimal.ONE, new BigDecimal("50"), Month.DECEMBER);
+        PayslipRequest request = new PayslipRequest(
+            new Employee("Michael", "Jackson", BigDecimal.ONE),
+            new BigDecimal("50"),
+            Month.DECEMBER
+        );
         PayslipResult result = processor.process(request);
         assertEquals("Michael Jackson", result.getName());
         assertEquals(Month.DECEMBER, result.getMonth());
@@ -85,7 +125,9 @@ public class PayslipProcessorTest {
 
     @Test
     public void processExample0() throws Exception {
-        PayslipRequest request = PayslipRequest.parse("David,Rudd,60050,9%,March");
+        PayslipRequest request = PayslipRequest.parse(
+            "David,Rudd,60050,9%,March"
+        );
         PayslipResult result = processor.process(request);
         assertEquals("David Rudd", result.getName());
         assertEquals(Month.MARCH, result.getMonth());
@@ -97,7 +139,9 @@ public class PayslipProcessorTest {
 
     @Test
     public void processExample1() throws Exception {
-        PayslipRequest request = PayslipRequest.parse("Ryan,Chen,120000,10%,March");
+        PayslipRequest request = PayslipRequest.parse(
+            "Ryan,Chen,120000,10%,March"
+        );
         PayslipResult result = processor.process(request);
         assertEquals("Ryan Chen", result.getName());
         assertEquals(Month.MARCH, result.getMonth());
@@ -109,7 +153,9 @@ public class PayslipProcessorTest {
 
     @Test
     public void nonTaxableSalary() {
-        PayslipRequest request = PayslipRequest.parse("Ryan,Chen,18200,1%,March");
+        PayslipRequest request = PayslipRequest.parse(
+            "Ryan,Chen,18200,1%,March"
+        );
         PayslipResult result = processor.process(request);
         assertEquals(1517, result.getSalary());
         assertEquals(0, result.getTax());
@@ -119,7 +165,9 @@ public class PayslipProcessorTest {
 
     @Test
     public void highestTaxableSalary() {
-        PayslipRequest request = PayslipRequest.parse("Ryan,Chen,180001,50%,March");
+        PayslipRequest request = PayslipRequest.parse(
+            "Ryan,Chen,180001,50%,March"
+        );
         PayslipResult result = processor.process(request);
         assertEquals(15000, result.getSalary());
         assertEquals(4546, result.getTax());
