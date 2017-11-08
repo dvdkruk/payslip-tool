@@ -3,6 +3,7 @@
  */
 package com.github.dvdkruk.payslip;
 
+import com.github.dvdkruk.payslip.model.FinancialInformation;
 import com.github.dvdkruk.payslip.model.PayslipException;
 import com.github.dvdkruk.payslip.model.PayslipRequest;
 import com.github.dvdkruk.payslip.model.PayslipResult;
@@ -55,15 +56,34 @@ public class PayslipProcessor {
      */
     public final PayslipResult process(final PayslipRequest request) {
         validate(request);
-        final RoundingMode rounding = RoundingMode.HALF_UP;
-        final int income = request.getSalary()
-            .divide(PayslipProcessor.AMOUNT_OF_MONTHS, 0, rounding)
-            .intValueExact();
-        final int tax = this.calculateTax(request.getSalary().intValueExact());
-        final int superann = calculateSuper(income, request.getSuperRate());
         final String name = request.getFullName();
         final Month month = request.getMonth();
-        return new PayslipResult(name, month, income, tax, superann);
+        return new PayslipResult(name, month, this.calculate(request));
+    }
+
+    /**
+     * Calculates monthly salary/income, income tax and superannuation.
+     *
+     * @param request With the data for the calculation.
+     * @return Monthly financial information.
+     */
+    private FinancialInformation calculate(final PayslipRequest request) {
+        final int income = calculateIncome(request.getSalary());
+        final int tax = this.calculateTax(request.getSalary().intValueExact());
+        final int superann = calculateSuper(income, request.getSuperRate());
+        return new FinancialInformation(income, tax, superann);
+    }
+
+    /**
+     * Calculates monthly salary.
+     *
+     * @param salary Annual salary.
+     * @return Monthly salary.
+     */
+    private static int calculateIncome(final BigDecimal salary) {
+        return salary
+            .divide(PayslipProcessor.AMOUNT_OF_MONTHS, 0, RoundingMode.HALF_UP)
+            .intValueExact();
     }
 
     /**

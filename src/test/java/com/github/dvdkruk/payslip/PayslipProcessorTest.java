@@ -79,7 +79,7 @@ public class PayslipProcessorTest {
     public void validateRequest() throws Exception {
         PayslipRequest request = new PayslipRequest("Michael", "Jackson", BigDecimal.ONE, new BigDecimal("50"), Month.DECEMBER);
         PayslipResult result = processor.process(request);
-        assertEquals("Michael Jackson", result.getFullName());
+        assertEquals("Michael Jackson", result.getName());
         assertEquals(Month.DECEMBER, result.getMonth());
     }
 
@@ -87,44 +87,44 @@ public class PayslipProcessorTest {
     public void processExample0() throws Exception {
         PayslipRequest request = PayslipRequest.parse("David,Rudd,60050,9%,March");
         PayslipResult result = processor.process(request);
-        assertEquals("David Rudd", result.getFullName());
+        assertEquals("David Rudd", result.getName());
         assertEquals(Month.MARCH, result.getMonth());
-        assertEquals(5004, result.getGrossIncome());
-        assertEquals(922, result.getIncomeTax());
+        assertEquals(5004, result.getSalary());
+        assertEquals(922, result.getTax());
         assertEquals(4082, result.getNetIncome());
-        assertEquals(450, result.getMonthlySuper());
+        assertEquals(450, result.getSuperannuation());
     }
 
     @Test
     public void processExample1() throws Exception {
         PayslipRequest request = PayslipRequest.parse("Ryan,Chen,120000,10%,March");
         PayslipResult result = processor.process(request);
-        assertEquals("Ryan Chen", result.getFullName());
+        assertEquals("Ryan Chen", result.getName());
         assertEquals(Month.MARCH, result.getMonth());
-        assertEquals(10000, result.getGrossIncome());
-        assertEquals(2696, result.getIncomeTax());
+        assertEquals(10000, result.getSalary());
+        assertEquals(2696, result.getTax());
         assertEquals(7304, result.getNetIncome());
-        assertEquals(1000, result.getMonthlySuper());
+        assertEquals(1000, result.getSuperannuation());
     }
 
     @Test
     public void nonTaxableSalary() {
         PayslipRequest request = PayslipRequest.parse("Ryan,Chen,18200,1%,March");
         PayslipResult result = processor.process(request);
-        assertEquals(1517, result.getGrossIncome());
-        assertEquals(0, result.getIncomeTax());
+        assertEquals(1517, result.getSalary());
+        assertEquals(0, result.getTax());
         assertEquals(1517, result.getNetIncome());
-        assertEquals(15, result.getMonthlySuper());
+        assertEquals(15, result.getSuperannuation());
     }
 
     @Test
     public void highestTaxableSalary() {
         PayslipRequest request = PayslipRequest.parse("Ryan,Chen,180001,50%,March");
         PayslipResult result = processor.process(request);
-        assertEquals(15000, result.getGrossIncome());
-        assertEquals(4546, result.getIncomeTax());
+        assertEquals(15000, result.getSalary());
+        assertEquals(4546, result.getTax());
         assertEquals(10454, result.getNetIncome());
-        assertEquals(7500, result.getMonthlySuper());
+        assertEquals(7500, result.getSuperannuation());
     }
 
 }

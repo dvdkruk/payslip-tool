@@ -36,6 +36,12 @@ $ java -jar ./payslip-tool-1.0-SNAPSHOT.jar David,Rudd,60050,9%,March Ryan,Chen,
 
 ### Rules I'm Not Sure I Like
 - ParameterNameCheck -> Must be alphanumeric lowercase and at least 3 chars long. `int i = 0` for loops is not allowed, also camelcase in variable names is not allowed (which is maybe a good thing).
+- RequireThisCheck -> All instance variables must start with this. Good for ready plain code, but also makes the code more verbose.
+- HeaderCheck -> First line of every java file should start with a license header. Probably legally required in USA.
+- JavadocTagsCheck -> @author tag middle name should start with a capitol letter. Not complied with European surnames like mine; `van der Kruk`.
+
+### Rules I Liked
+- ParameterNumberCheck -> No more than 3 parameters are allowed.
 
 
 
