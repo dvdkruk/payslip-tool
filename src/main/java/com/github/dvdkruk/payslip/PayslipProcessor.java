@@ -45,7 +45,7 @@ public class PayslipProcessor {
     /**
      * List containing all the income tax rules for the calculation.
      */
-    private final List<TaxRule> rules = TaxRuleHelper.getDefaultTaxRules();
+    private final List<TaxRule> rules = TaxRuleHelper.DEFAULT_RULES;
 
     /**
      * Processes the request argument as a payslip result.
