@@ -53,7 +53,7 @@ final class PayslipCli {
      */
     private void start(final String... args) {
         if (this.console == null) {
-            throw new PayslipCliRuntimeException("no console");
+            throw new PayslipCliRuntimeException();
         }
         if (args.length == 0) {
             this.runInteractiveMode();
@@ -157,11 +157,9 @@ final class PayslipCli {
 
         /**
          * Constructor for PayslipCliRuntimeException.
-         *
-         * @param msg Exception message.
          */
-        PayslipCliRuntimeException(final String msg) {
-            super(msg);
+        PayslipCliRuntimeException() {
+            super("no console");
         }
     }
 

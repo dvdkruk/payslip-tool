@@ -111,7 +111,7 @@ public class PayslipProcessor {
         }
         final BigDecimal rate = request.getSuperRate();
         final BigDecimal min = BigDecimal.ZERO;
-        if (isBetween(rate, min, PayslipProcessor.MAX_SUPER_RATE)) {
+        if (isBetween(rate, min)) {
             throw new PayslipException("Super rate must be between 0% - 50%");
         }
     }
@@ -121,14 +121,13 @@ public class PayslipProcessor {
      *
      * @param rate The rate to check.
      * @param min Minimal value for the check.
-     * @param max Maximum value for the check.
      * @return True when rate is between min and max, else false is returned.
      */
     private static boolean isBetween(
         final BigDecimal rate,
-        final BigDecimal min,
-        final BigDecimal max) {
-        return rate.compareTo(min) < 0 || rate.compareTo(max) > 0;
+        final BigDecimal min) {
+        return rate.compareTo(min) < 0
+            || rate.compareTo(PayslipProcessor.MAX_SUPER_RATE) > 0;
     }
 
     /**
