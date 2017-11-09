@@ -1,21 +1,42 @@
-/*
- *  Copyright (c) 2017, Damiaan van der Kruk.
- *
+/**
+ * Copyright (c) 2017, Damiaan van der Kruk.
  */
-
 package com.github.dvdkruk.payslip.model;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 
+/**
+ * Contains employee data.
+ *
+ * @author Damiaan Van Der Kruk (Damiaan.van.der.Kruk@gmail.com)
+ * @version $Id$
+ * @since 1.0
+ */
 public class Employee {
 
+    /**
+     * Employee's forename.
+     */
     private final String forename;
 
+    /**
+     * Employee's surname.
+     */
     private final String surname;
 
+    /**
+     * Employee's annual salary.
+     */
     private final BigDecimal salary;
 
+    /**
+     * Employee constructor.
+     *
+     * @param forename Employee's forename.
+     * @param surname Employee's surname.
+     * @param salary Employee's annual salary.
+     */
     public Employee(
         final String forename,
         final String surname,
@@ -25,30 +46,14 @@ public class Employee {
         this.salary = salary;
     }
 
-    final String getForename() {
-        return this.forename;
-    }
-
-    final String getSurname() {
-        return this.surname;
-    }
-
-    final String getFullName() {
-        return this.forename + " " + this.surname;
-    }
-
-    final BigDecimal getAnnualSalary() {
-        return this.salary;
-    }
-
     @Override
     public final String toString() {
-        final StringBuilder sb = new StringBuilder("Employee{");
-        sb.append("forename='").append(this.forename).append('\'');
-        sb.append(", surname='").append(this.surname).append('\'');
-        sb.append(", salary='").append(this.salary).append('\'');
-        sb.append('}');
-        return sb.toString();
+        final StringBuilder builder = new StringBuilder("Employee{");
+        builder.append("forename='").append(this.forename).append('\'');
+        builder.append(", surname='").append(this.surname).append('\'');
+        builder.append(", salary='").append(this.salary).append('\'');
+        builder.append('}');
+        return builder.toString();
     }
 
     @Override
@@ -71,5 +76,43 @@ public class Employee {
     public final int hashCode() {
         return Objects.hash(this.forename, this.surname, this.salary);
     }
-}
 
+    /**
+     * Employee's forename.
+     *
+     * @return Employee's forename.
+     */
+    final String getForename() {
+        return this.forename;
+    }
+
+    /**
+     * Employee's surname name.
+     *
+     * @return Employee's surname name.
+     */
+    final String getSurname() {
+        return this.surname;
+    }
+
+    /**
+     * Employee's full name.
+     *
+     * @return Employee's full name.
+     */
+    final String getFullName() {
+        return new StringBuilder(this.forename)
+            .append(" ")
+            .append(this.surname)
+            .toString();
+    }
+
+    /**
+     * Annual salary.
+     *
+     * @return Annual salary.
+     */
+    final BigDecimal getAnnualSalary() {
+        return this.salary;
+    }
+}
