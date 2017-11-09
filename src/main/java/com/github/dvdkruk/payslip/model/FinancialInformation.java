@@ -48,7 +48,7 @@ public class FinancialInformation {
      *
      * @return Monthly salary.
      */
-    final int getSalary() {
+    public final int getSalary() {
         return this.salary;
     }
 
@@ -57,7 +57,7 @@ public class FinancialInformation {
      *
      * @return Monthly income tax.
      */
-    final int getTax() {
+    public final int getTax() {
         return this.tax;
     }
 
@@ -66,7 +66,7 @@ public class FinancialInformation {
      *
      * @return Monthly net income.
      */
-    final int getNetIncome() {
+    public final int getNetIncome() {
         return this.salary - this.tax;
     }
 
@@ -75,7 +75,7 @@ public class FinancialInformation {
      *
      * @return Monthly superann sum.
      */
-    final int getSuperannuation() {
+    public final int getSuperannuation() {
         return this.superann;
     }
 }

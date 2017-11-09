@@ -73,7 +73,8 @@ public class PayslipRequestTest {
 
     @Test
     public void parseTest() {
-        PayslipRequest jennifer = PayslipRequest.parse("Jennifer,Lawrence,1337,10.1%,March");
+        PayslipRequestParser parser = new PayslipRequestParser("Jennifer,Lawrence,1337,10.1%,March");
+        PayslipRequest jennifer = parser.toPayslipRequest();
         assertEquals("Jennifer", jennifer.getForename());
         assertEquals("Lawrence", jennifer.getSurname());
         assertEquals(new BigDecimal("1337"), jennifer.getAnnualSalary());
@@ -85,20 +86,20 @@ public class PayslipRequestTest {
     public void parseInvalidMonth() {
         thrown.expect(PayslipException.class);
         thrown.expectMessage("Peter is an invalid month");
-        PayslipRequest.parse("Jennifer,Lawrence,1337,10.1%,Peter");
+        new PayslipRequestParser("Jennifer,Lawrence,1337,10.1%,Peter").toPayslipRequest();
     }
 
     @Test
     public void parseInvalidEmptyArguments() {
         thrown.expect(PayslipException.class);
         thrown.expectMessage("a payslip request must consist of 5 (non empty) elements");
-        PayslipRequest.parse(" , , , , ");
+        new PayslipRequestParser(" , , , , ").toPayslipRequest();
     }
 
     @Test
     public void parseInvalidArgumentAmount() {
         thrown.expect(PayslipException.class);
         thrown.expectMessage("a payslip request must consist of 5 (non empty) elements");
-        PayslipRequest.parse("Jennifer,Lawrence,1337,10.1%");
+        new PayslipRequestParser("Jennifer,Lawrence,1337,10.1%").toPayslipRequest();
     }
 }

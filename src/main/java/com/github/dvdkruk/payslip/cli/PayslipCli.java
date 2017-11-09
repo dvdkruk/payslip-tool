@@ -6,6 +6,7 @@ package com.github.dvdkruk.payslip.cli;
 import com.github.dvdkruk.payslip.PayslipProcessor;
 import com.github.dvdkruk.payslip.model.PayslipException;
 import com.github.dvdkruk.payslip.model.PayslipRequest;
+import com.github.dvdkruk.payslip.model.PayslipRequestParser;
 import com.github.dvdkruk.payslip.model.PayslipResult;
 import java.io.Console;
 import java.io.PrintWriter;
@@ -132,7 +133,8 @@ final class PayslipCli {
      */
     private void parse(final String line, final int index) {
         try {
-            final PayslipRequest request = PayslipRequest.parse(line);
+            final PayslipRequestParser parser = new PayslipRequestParser(line);
+            final PayslipRequest request = parser.toPayslipRequest();
             final PayslipResult result = this.processor.process(request);
             this.console.writer().println(result.toString());
         } catch (final PayslipException pex) {

@@ -3,7 +3,7 @@ package com.github.dvdkruk.payslip;
 import com.github.dvdkruk.payslip.model.Employee;
 import com.github.dvdkruk.payslip.model.PayslipException;
 import com.github.dvdkruk.payslip.model.PayslipRequest;
-import com.github.dvdkruk.payslip.model.PayslipRequestTest;
+import com.github.dvdkruk.payslip.model.PayslipRequestParser;
 import com.github.dvdkruk.payslip.model.PayslipResult;
 import org.junit.Rule;
 import org.junit.Test;
@@ -125,9 +125,9 @@ public class PayslipProcessorTest {
 
     @Test
     public void processExample0() throws Exception {
-        PayslipRequest request = PayslipRequest.parse(
+        PayslipRequest request = new PayslipRequestParser(
             "David,Rudd,60050,9%,March"
-        );
+        ).toPayslipRequest();
         PayslipResult result = processor.process(request);
         assertEquals("David Rudd", result.getName());
         assertEquals(Month.MARCH, result.getMonth());
@@ -139,9 +139,9 @@ public class PayslipProcessorTest {
 
     @Test
     public void processExample1() throws Exception {
-        PayslipRequest request = PayslipRequest.parse(
+        PayslipRequest request = new PayslipRequestParser(
             "Ryan,Chen,120000,10%,March"
-        );
+        ).toPayslipRequest();
         PayslipResult result = processor.process(request);
         assertEquals("Ryan Chen", result.getName());
         assertEquals(Month.MARCH, result.getMonth());
@@ -153,9 +153,9 @@ public class PayslipProcessorTest {
 
     @Test
     public void nonTaxableSalary() {
-        PayslipRequest request = PayslipRequest.parse(
+        PayslipRequest request = new PayslipRequestParser(
             "Ryan,Chen,18200,1%,March"
-        );
+        ).toPayslipRequest();
         PayslipResult result = processor.process(request);
         assertEquals(1517, result.getSalary());
         assertEquals(0, result.getTax());
@@ -165,9 +165,9 @@ public class PayslipProcessorTest {
 
     @Test
     public void highestTaxableSalary() {
-        PayslipRequest request = PayslipRequest.parse(
+        PayslipRequest request = new PayslipRequestParser(
             "Ryan,Chen,180001,50%,March"
-        );
+        ).toPayslipRequest();
         PayslipResult result = processor.process(request);
         assertEquals(15000, result.getSalary());
         assertEquals(4546, result.getTax());

@@ -48,12 +48,12 @@ public class Employee {
 
     @Override
     public final String toString() {
-        final StringBuilder builder = new StringBuilder("Employee{");
-        builder.append("forename='").append(this.forename).append('\'');
-        builder.append(", surname='").append(this.surname).append('\'');
-        builder.append(", salary='").append(this.salary).append('\'');
-        builder.append('}');
-        return builder.toString();
+        return new StringBuilder("Employee{")
+            .append("forename='").append(this.forename).append('\'')
+            .append(", surname='").append(this.surname).append('\'')
+            .append(", salary='").append(this.salary).append('\'')
+            .append('}')
+            .toString();
     }
 
     @Override
@@ -65,7 +65,7 @@ public class Employee {
             equals = false;
         } else {
             final Employee that = (Employee) obj;
-            return Objects.equals(this.forename, that.forename)
+            equals = Objects.equals(this.forename, that.forename)
                 && Objects.equals(this.surname, that.surname)
                 && Objects.equals(this.salary, that.salary);
         }
@@ -82,7 +82,7 @@ public class Employee {
      *
      * @return Employee's forename.
      */
-    final String getForename() {
+    public final String getForename() {
         return this.forename;
     }
 
@@ -91,7 +91,7 @@ public class Employee {
      *
      * @return Employee's surname name.
      */
-    final String getSurname() {
+    public final String getSurname() {
         return this.surname;
     }
 
@@ -100,7 +100,7 @@ public class Employee {
      *
      * @return Employee's full name.
      */
-    final String getFullName() {
+    public final String getFullName() {
         return new StringBuilder(this.forename)
             .append(" ")
             .append(this.surname)
@@ -112,7 +112,7 @@ public class Employee {
      *
      * @return Annual salary.
      */
-    final BigDecimal getAnnualSalary() {
+    public final BigDecimal getAnnualSalary() {
         return this.salary;
     }
 }
