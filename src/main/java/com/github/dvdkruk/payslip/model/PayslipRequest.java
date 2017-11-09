@@ -23,12 +23,30 @@ import java.util.Objects;
  */
 public class PayslipRequest {
 
+    /**
+     * Parse index of forename.
+     */
     private static final int FORENAME_INDEX = 0;
+    /**
+     * Parse index of surname.
+     */
     private static final int SURNAME_INDEX = 1;
+    /**
+     * Parse index of annual salary.
+     */
     private static final int ANNUAL_SALARY_INDEX = 2;
+    /**
+     * Parse index of superannuation rate.
+     */
     private static final int SUPER_RATE_INDEX = 3;
+    /**
+     * Parse index of month.
+     */
     private static final int MONTH_INDEX = 4;
 
+    /**
+     * Maps fields to parse indexes.
+     */
     private static final Map<String, Integer> PARSE_INDEXES =
         new HashMap<String, Integer>() {
         {
@@ -40,8 +58,14 @@ public class PayslipRequest {
         }
     };
 
+    /**
+     * Separator used in the string representation.
+     */
     private static final String SEPARATOR = ",";
 
+    /**
+     * Formats BigDecimals with 2 decimals.
+     */
     private static final DecimalFormat TWO_DECIMAL_FORMATTER =
         new DecimalFormat() {
         {
@@ -52,6 +76,9 @@ public class PayslipRequest {
         }
     };
 
+    /**
+     * Formats BigDecimals to a display string with no decimals.
+     */
     private static final DecimalFormat INTEGER_FORMATTER = new DecimalFormat() {
         {
             setMinimumFractionDigits(0);
@@ -76,6 +103,13 @@ public class PayslipRequest {
      */
     private final Month month;
 
+    /**
+     * Payslip request constructor.
+     *
+     * @param employee Employee.
+     * @param rate Superannuation rate.
+     * @param month Payslip month.
+     */
     public PayslipRequest(
         final Employee employee,
         final BigDecimal rate,
@@ -96,26 +130,56 @@ public class PayslipRequest {
             .toString();
     }
 
+    /**
+     * Employee's full name, concatenation of forename and surname.
+     *
+     * @return Employee's full name.
+     */
     public final String getFullName() {
         return this.employee.getFullName();
     }
 
+    /**
+     * Employee's forename.
+     *
+     * @return Employee's forename.
+     */
     public final String getForename() {
         return this.employee.getForename();
     }
 
+    /**
+     * Employee's surname.
+     *
+     * @return Employee's surname.
+     */
     public final String getSurname() {
         return this.employee.getSurname();
     }
 
+    /**
+     * Annual salary.
+     *
+     * @return Annual salary.
+     */
     public final BigDecimal getAnnualSalary() {
         return this.employee.getAnnualSalary();
     }
 
+    /**
+     * Superannuation rate.
+     *
+     * @return Superannuation rate.
+     */
     public final BigDecimal getSuperRate() {
         return this.rate;
     }
 
+    /**
+     * Month.
+     *
+     * @return Month.
+     */
     public final Month getMonth() {
         return this.month;
     }
@@ -169,6 +233,12 @@ public class PayslipRequest {
         return parse(args);
     }
 
+    /**
+     * Parse args array into {@code PayslipRequest}.
+     *
+     * @param args Arguments array to parse from.
+     * @return Payslip request.
+     */
     private static PayslipRequest parse(final String[] args) {
         final Employee employee = parseEmployee(args);
         final BigDecimal rate = parseSuperRate(args);
@@ -176,6 +246,12 @@ public class PayslipRequest {
         return new PayslipRequest(employee, rate, month);
     }
 
+    /**
+     * Parse month rate from given args array.
+     *
+     * @param args Arguments array to pick and parse from.
+     * @return Month.
+     */
     private static Month parseMonth(final String[] args) {
         final String month = args[PayslipRequest.PARSE_INDEXES.get("month")];
         try {
@@ -186,6 +262,12 @@ public class PayslipRequest {
         }
     }
 
+    /**
+     * Parse superannuation rate from given args array.
+     *
+     * @param args Arguments array to pick and parse from.
+     * @return Superannuation rate.
+     */
     private static BigDecimal parseSuperRate(final String[] args) {
         final String field = "super rate";
         final String rate = args[PayslipRequest.PARSE_INDEXES.get(field)];
@@ -203,6 +285,12 @@ public class PayslipRequest {
         return parseBigDecimal(digits, field);
     }
 
+    /**
+     * Parse employee from given args array.
+     *
+     * @param args Arguments array to pick and parse from.
+     * @return Employee.
+     */
     private static Employee parseEmployee(final String[] args) {
         final String forename =
             args[PayslipRequest.PARSE_INDEXES.get("forename")];
@@ -212,11 +300,25 @@ public class PayslipRequest {
         return new Employee(forename, surname, salary);
     }
 
+    /**
+     * Parse annual salary from the given args array.
+     *
+     * @param args Arguments array to pick and parse from.
+     * @return Annual salary.
+     */
     private static BigDecimal parseAnnualSalary(final String[] args) {
         final String field = "annual salary";
         final String salary = args[PayslipRequest.PARSE_INDEXES.get(field)];
         return parseBigDecimal(salary, field);
     }
+
+    /**
+     * Parse arg into a decimal.
+     *
+     * @param arg Argument to parse.
+     * @param field Field shown when arg is not parable to a BigDecimal.
+     * @return Arg as BigDecimal.
+     */
     private static BigDecimal parseBigDecimal(
         final String arg,
         final String field) {
@@ -232,14 +334,29 @@ public class PayslipRequest {
         }
     }
 
+    /**
+     * Display annual salary without decimals/cents.
+     *
+     * @return Display annual salary without decimals/cents.
+     */
     private String getDisplaySalary() {
         return INTEGER_FORMATTER.format(this.getAnnualSalary());
     }
 
+    /**
+     * Display superannuation with two decimals.
+     *
+     * @return Display superannuation with two decimals.
+     */
     private String getDisplaySuperRate() {
         return TWO_DECIMAL_FORMATTER.format(this.rate);
     }
 
+    /**
+     * Full display month name in English.
+     *
+     * @return Full display month name in English.
+     */
     private String getDisplayMonthName() {
         return this.month.getDisplayName(TextStyle.FULL, Locale.ENGLISH);
     }
