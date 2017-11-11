@@ -3,11 +3,10 @@
  */
 package com.github.dvdkruk.payslip.model;
 
+import com.github.dvdkruk.payslip.TestWrapper;
 import java.time.Month;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.Is;
-import org.hamcrest.core.IsEqual;
-import org.hamcrest.core.IsNot;
 import org.junit.Test;
 
 /**
@@ -55,14 +54,10 @@ public class PayslipResultTest {
      */
     @Test
     public final void equalsCheck() {
-        equalsCheck(
-            PayslipResultTest.RESULT_EMMA,
-            PayslipResultTest.SAME_RESULT_EMMA
-        );
-        notEqualsCheck(
-            PayslipResultTest.RESULT_EMMA,
-            PayslipResultTest.RESULT_DANIEL
-        );
+        final TestWrapper wrapper =
+            new TestWrapper<>(PayslipResultTest.RESULT_EMMA);
+        wrapper.equalTo(PayslipResultTest.SAME_RESULT_EMMA);
+        wrapper.notEqualTo(PayslipResultTest.RESULT_DANIEL);
     }
 
     /**
@@ -70,14 +65,9 @@ public class PayslipResultTest {
      */
     @Test
     public final void hashCodeCheck() {
-        MatcherAssert.assertThat(
-            RESULT_EMMA.hashCode(),
-            Is.is(SAME_RESULT_EMMA.hashCode())
-        );
-        MatcherAssert.assertThat(
-            RESULT_EMMA.hashCode(),
-            IsNot.not(RESULT_DANIEL.hashCode())
-        );
+        final TestWrapper wrapper = new TestWrapper<>(RESULT_EMMA.hashCode());
+        wrapper.isSame(SAME_RESULT_EMMA.hashCode());
+        wrapper.isNotSame(RESULT_DANIEL.hashCode());
     }
 
     /**
@@ -107,7 +97,8 @@ public class PayslipResultTest {
      */
     @Test
     public final void getMonth() {
-        MatcherAssert.assertThat(RESULT_EMMA.getMonth(), Is.is(Month.FEBRUARY));
+        new TestWrapper<>(RESULT_EMMA.getMonth())
+            .isSame(Month.FEBRUARY);
     }
 
     /**
@@ -115,10 +106,8 @@ public class PayslipResultTest {
      */
     @Test
     public final void getGrossIncome() {
-        MatcherAssert.assertThat(
-            RESULT_EMMA.getSalary(),
-            Is.is(PayslipResultTest.SALARY)
-        );
+        new TestWrapper<>(RESULT_EMMA.getSalary())
+            .isSame(PayslipResultTest.SALARY);
     }
 
     /**
@@ -126,10 +115,7 @@ public class PayslipResultTest {
      */
     @Test
     public final void getIncomeTax() {
-        MatcherAssert.assertThat(
-            RESULT_EMMA.getTax(),
-            Is.is(PayslipResultTest.TAX)
-        );
+        new TestWrapper<>(RESULT_EMMA.getTax()).isSame(PayslipResultTest.TAX);
     }
 
     /**
@@ -173,28 +159,6 @@ public class PayslipResultTest {
             PayslipResultTest.TAX,
             PayslipResultTest.SUPER
         );
-    }
-
-    /**
-     * Checks if {@code obj} is not equal to {@code that}.
-     *
-     * @param obj Object used in the not equals test.
-     * @param that Another object used in the not equals test.
-     */
-    private static void notEqualsCheck(final Object obj, final Object that) {
-        MatcherAssert.assertThat(obj, IsNot.not(IsEqual.equalTo(that)));
-        MatcherAssert.assertThat(that, IsNot.not(IsEqual.equalTo(obj)));
-    }
-
-    /**
-     * Checks if {@code obj} is equal to {@code that}.
-     *
-     * @param obj Object used in the equals test.
-     * @param that Another object used in the equals test.
-     */
-    private static void equalsCheck(final Object obj, final Object that) {
-        MatcherAssert.assertThat(obj, IsEqual.equalTo(that));
-        MatcherAssert.assertThat(that, IsEqual.equalTo(obj));
     }
 
 }

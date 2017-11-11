@@ -7,10 +7,8 @@ import com.github.dvdkruk.payslip.model.Employee;
 import com.github.dvdkruk.payslip.model.PayslipException;
 import com.github.dvdkruk.payslip.model.PayslipRequest;
 import com.github.dvdkruk.payslip.model.PayslipRequestParser;
-import com.github.dvdkruk.payslip.model.PayslipResult;
 import java.math.BigDecimal;
 import java.time.Month;
-import org.junit.Assert;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -49,56 +47,58 @@ public class PayslipProcessorTest {
 
     /**
      * Checks that a {@link PayslipException} with message {@link
-     * PayslipProcessor#INVALID_FORENAME} is thrown for invalid forenames.
+     * PayslipProcessor#INVAL_FORENAME} is thrown for invalid forenames.
      *
      * @param forename An invalid forename.
      */
     @ParameterizedTest
     @ValueSource(strings = {"", " "})
     public final void invalidForenameTest(final String forename) {
-        this.checkPayslipExceptionMessage(
-            PayslipProcessor.INVALID_FORENAME,
-            new Employee(forename, PayslipProcessorTest.SURNAME, BigDecimal.TEN)
+        final Employee employee = new Employee(
+            forename,
+            PayslipProcessorTest.SURNAME,
+            BigDecimal.TEN
         );
+        checkPayslipExceptionMessage(PayslipProcessor.INVAL_FORENAME, employee);
     }
 
     /**
      * Checks that a {@link PayslipException} with message {@link
-     * PayslipProcessor#INVALID_SURNAME} is thrown for invalid surnames.
+     * PayslipProcessor#INVAL_SURNAME} is thrown for invalid surnames.
      *
      * @param surname An invalid surname.
      */
     @ParameterizedTest
     @ValueSource(strings = {"", " "})
     public final void invalidSurnameTest(final String surname) {
-        this.checkPayslipExceptionMessage(
-            PayslipProcessor.INVALID_SURNAME,
-            new Employee(PayslipProcessorTest.FORENAME, surname, BigDecimal.TEN)
+        final Employee employee = new Employee(
+            PayslipProcessorTest.FORENAME,
+            surname,
+            BigDecimal.TEN
         );
+        checkPayslipExceptionMessage(PayslipProcessor.INVAL_SURNAME, employee);
     }
 
     /**
      * Checks that a {@link PayslipException} with message {@link
-     * PayslipProcessor#INVALID_SALARY} is thrown for invalid salaries.
+     * PayslipProcessor#INVAL_SALARY} is thrown for invalid salaries.
      *
      * @param salary An invalid salary.
      */
     @ParameterizedTest
     @ValueSource(strings = {"-1", "0"})
     public final void invalidSalaryTest(final String salary) {
-        this.checkPayslipExceptionMessage(
-            PayslipProcessor.INVALID_SALARY,
-            new Employee(
-                PayslipProcessorTest.FORENAME,
-                PayslipProcessorTest.SURNAME,
-                new BigDecimal(salary)
-            )
+        final Employee employee =  new Employee(
+            PayslipProcessorTest.FORENAME,
+            PayslipProcessorTest.SURNAME,
+            new BigDecimal(salary)
         );
+        checkPayslipExceptionMessage(PayslipProcessor.INVAL_SALARY, employee);
     }
 
     /**
      * Checks that a {@link PayslipException} with message {@link
-     * PayslipProcessor#INVALID_SUPER_RATE} is thrown for invalid superannuation
+     * PayslipProcessor#INVAL_SUPER_RATE} is thrown for invalid superannuation
      * rates.
      *
      * @param rate An invalid superannuation rate.
@@ -106,14 +106,12 @@ public class PayslipProcessorTest {
     @ParameterizedTest
     @ValueSource(strings = {"-1", "50.1"})
     public final void invalidSuperRateTest(final String rate) {
-        this.checkPayslipExceptionMessage(
-            PayslipProcessor.INVALID_SUPER_RATE,
-            new PayslipRequest(
-                PayslipProcessorTest.EMPLOYEE,
-                new BigDecimal(rate),
-                Month.JANUARY
-            )
+        final PayslipRequest reqst = new PayslipRequest(
+            PayslipProcessorTest.EMPLOYEE,
+            new BigDecimal(rate),
+            Month.JANUARY
         );
+        checkPayslipExceptionMessage(PayslipProcessor.INVAL_SUPER_RATE, reqst);
     }
 
     /**
@@ -128,9 +126,9 @@ public class PayslipProcessorTest {
     public final void validateRequest(final String input, final String output) {
         final PayslipRequest request = new PayslipRequestParser(input)
             .toPayslipRequest();
-        final PayslipResult result = PayslipProcessorTest.PROCESSOR
-            .process(request);
-        Assert.assertEquals(output, result.toString());
+        new TestWrapper<>(
+            PayslipProcessorTest.PROCESSOR.process(request).toString()
+        ).equalTo(output);
     }
 
     /**
@@ -143,7 +141,7 @@ public class PayslipProcessorTest {
      * @param employee The {@link Employee} object used in the
      *  {@link PayslipRequest}.
      */
-    private void checkPayslipExceptionMessage(
+    private static void checkPayslipExceptionMessage(
         final String expected,
         final Employee employee) {
         final PayslipRequest request = new PayslipRequest(
@@ -151,7 +149,7 @@ public class PayslipProcessorTest {
             BigDecimal.TEN,
             Month.JANUARY
         );
-        this.checkPayslipExceptionMessage(expected, request);
+        checkPayslipExceptionMessage(expected, request);
     }
 
     /**
@@ -161,17 +159,17 @@ public class PayslipProcessorTest {
      * @param expected Message expected by the thrown {@link PayslipException}.
      * @param request The request that needs to processed.
      */
-    private void checkPayslipExceptionMessage(
+    private static void checkPayslipExceptionMessage(
         final String expected,
         final PayslipRequest request) {
         PayslipException exception = null;
         try {
-            PayslipProcessorTest.PROCESSOR.process(request);
+            new PayslipProcessor().process(request);
         } catch (final PayslipException psx) {
             exception = psx;
         }
-        Assert.assertNotNull(exception);
-        Assert.assertEquals(expected, exception.getMessage());
+        new TestWrapper<>(exception).isNotNull();
+        new TestWrapper<>(exception.getMessage()).equalTo(expected);
     }
 
 }

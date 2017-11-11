@@ -31,15 +31,15 @@ public class PayslipProcessor {
     /**
      * Exception message for invalid forename.
      */
-    public static final String INVALID_FORENAME = "First name is null or empty";
+    public static final String INVAL_FORENAME = "First name is null or empty";
     /**
      * Exception message for invalid surname.
      */
-    public static final String INVALID_SURNAME = "Last name is null or empty";
+    public static final String INVAL_SURNAME = "Last name is null or empty";
     /**
      * Exception message for invalid salary.
      */
-    public static final String INVALID_SALARY =
+    public static final String INVAL_SALARY =
         "Salary must be bigger than zero";
     /**
      * Exception message for null superannuation rate.
@@ -48,7 +48,7 @@ public class PayslipProcessor {
     /**
      * Exception message for invalid superannuation rate range.
      */
-    public static final String INVALID_SUPER_RATE =
+    public static final String INVAL_SUPER_RATE =
         "Super rate must be between 0% - 50%";
 
     /**
@@ -121,24 +121,24 @@ public class PayslipProcessor {
      */
     private static void validate(final PayslipRequest request) {
         if (request == null) {
-            throw new PayslipException(REQUEST_NULL);
+            throw new PayslipException(PayslipProcessor.REQUEST_NULL);
         }
         if (isNullOrEmpty(request.getForename())) {
-            throw new PayslipException(INVALID_FORENAME);
+            throw new PayslipException(PayslipProcessor.INVAL_FORENAME);
         }
         if (isNullOrEmpty(request.getSurname())) {
-            throw new PayslipException(INVALID_SURNAME);
+            throw new PayslipException(PayslipProcessor.INVAL_SURNAME);
         }
         if (request.getAnnualSalary().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new PayslipException(INVALID_SALARY);
+            throw new PayslipException(PayslipProcessor.INVAL_SALARY);
         }
         if (request.getSuperRate() == null) {
-            throw new PayslipException(SUPER_RATE_NULL);
+            throw new PayslipException(PayslipProcessor.SUPER_RATE_NULL);
         }
         final BigDecimal rate = request.getSuperRate();
         final BigDecimal min = BigDecimal.ZERO;
         if (isBetween(rate, min)) {
-            throw new PayslipException(INVALID_SUPER_RATE);
+            throw new PayslipException(PayslipProcessor.INVAL_SUPER_RATE);
         }
     }
 

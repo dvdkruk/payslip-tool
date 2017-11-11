@@ -24,24 +24,24 @@ public class PayslipRequestParser {
     /**
      * Exception message for parsing an invalid amount of elements.
      */
-    public static final String INVALID_ELEMENT_AMOUNT = String.format(
+    public static final String INVAL_ELMNT_AMNT = String.format(
         "a payslip request must consist of %s (non empty) elements",
-        PARSE_LEN
+        PayslipRequestParser.PARSE_LEN
     );
     /**
      * Exception message parsing an invalid superannuation rate.
      */
-    public static final String INVALID_SUPER_RATE =
+    public static final String INVAL_SUPER_RATE =
         "super rate must have at least 1 number & end with a %";
     /**
      * Exception message for parsing a superannuation rate without percent sign.
      */
-    public static final String NO_PERCENTAGE_SUFFIX =
+    public static final String NO_PERCNT_SUFF =
         "super rate must be suffixed with a % character";
     /**
      * Exception message for parsing an invalid month.
      */
-    public static final String INVALID_MONTH = "%s is an invalid month";
+    public static final String INVAL_MONTH = "%s is an invalid month";
 
     /**
      * Parse index of forename.
@@ -101,7 +101,7 @@ public class PayslipRequestParser {
             .filter(e -> !e.isEmpty())
             .toArray(String[]::new);
         if (args.length != PayslipRequestParser.PARSE_LEN) {
-            throw new PayslipException(INVALID_ELEMENT_AMOUNT);
+            throw new PayslipException(PayslipRequestParser.INVAL_ELMNT_AMNT);
         }
         return PayslipRequestParser.parse(args);
     }
@@ -131,7 +131,7 @@ public class PayslipRequestParser {
             return Month.valueOf(month.toUpperCase(Locale.getDefault()));
         } catch (final IllegalArgumentException iae) {
             final String msg =
-                String.format(PayslipRequestParser.INVALID_MONTH, month);
+                String.format(PayslipRequestParser.INVAL_MONTH, month);
             throw new PayslipException(msg, iae);
         }
     }
@@ -145,11 +145,11 @@ public class PayslipRequestParser {
     private static BigDecimal parseSuperRate(final String... args) {
         final String rate = args[PayslipRequestParser.SUPER_RATE_I];
         if (rate.length() < 2) {
-            throw new PayslipException(PayslipRequestParser.INVALID_SUPER_RATE);
+            throw new PayslipException(PayslipRequestParser.INVAL_SUPER_RATE);
         }
         if (rate.charAt(rate.length() - 1) != '%') {
             throw new PayslipException(
-                PayslipRequestParser.NO_PERCENTAGE_SUFFIX
+                PayslipRequestParser.NO_PERCNT_SUFF
             );
         }
         final String digits = rate.substring(0, rate.length() - 1);
