@@ -59,7 +59,7 @@ public class PayslipProcessorTest {
             PayslipProcessorTest.SURNAME,
             BigDecimal.TEN
         );
-        checkPayslipExceptionMessage(PayslipProcessor.INVAL_FORENAME, employee);
+        checkPayslipExceptionMsg(PayslipProcessor.INVAL_FORENAME, employee);
     }
 
     /**
@@ -76,7 +76,7 @@ public class PayslipProcessorTest {
             surname,
             BigDecimal.TEN
         );
-        checkPayslipExceptionMessage(PayslipProcessor.INVAL_SURNAME, employee);
+        checkPayslipExceptionMsg(PayslipProcessor.INVAL_SURNAME, employee);
     }
 
     /**
@@ -93,7 +93,7 @@ public class PayslipProcessorTest {
             PayslipProcessorTest.SURNAME,
             new BigDecimal(salary)
         );
-        checkPayslipExceptionMessage(PayslipProcessor.INVAL_SALARY, employee);
+        checkPayslipExceptionMsg(PayslipProcessor.INVAL_SALARY, employee);
     }
 
     /**
@@ -106,12 +106,12 @@ public class PayslipProcessorTest {
     @ParameterizedTest
     @ValueSource(strings = {"-1", "50.1"})
     public final void invalidSuperRateTest(final String rate) {
-        final PayslipRequest reqst = new PayslipRequest(
+        final PayslipRequest request = new PayslipRequest(
             PayslipProcessorTest.EMPLOYEE,
             new BigDecimal(rate),
             Month.JANUARY
         );
-        checkPayslipExceptionMessage(PayslipProcessor.INVAL_SUPER_RATE, reqst);
+        checkPayslipExceptionMsg(PayslipProcessor.INVAL_SUPER_RATE, request);
     }
 
     /**
@@ -126,7 +126,7 @@ public class PayslipProcessorTest {
     public final void validateRequest(final String input, final String output) {
         final PayslipRequest request = new PayslipRequestParser(input)
             .toPayslipRequest();
-        new TestWrapper<>(
+        new TestAssert<>(
             PayslipProcessorTest.PROCESSOR.process(request).toString()
         ).equalTo(output);
     }
@@ -141,7 +141,7 @@ public class PayslipProcessorTest {
      * @param employee The {@link Employee} object used in the
      *  {@link PayslipRequest}.
      */
-    private static void checkPayslipExceptionMessage(
+    private static void checkPayslipExceptionMsg(
         final String expected,
         final Employee employee) {
         final PayslipRequest request = new PayslipRequest(
@@ -149,7 +149,7 @@ public class PayslipProcessorTest {
             BigDecimal.TEN,
             Month.JANUARY
         );
-        checkPayslipExceptionMessage(expected, request);
+        checkPayslipExceptionMsg(expected, request);
     }
 
     /**
@@ -159,7 +159,7 @@ public class PayslipProcessorTest {
      * @param expected Message expected by the thrown {@link PayslipException}.
      * @param request The request that needs to processed.
      */
-    private static void checkPayslipExceptionMessage(
+    private static void checkPayslipExceptionMsg(
         final String expected,
         final PayslipRequest request) {
         PayslipException exception = null;
@@ -168,8 +168,8 @@ public class PayslipProcessorTest {
         } catch (final PayslipException psx) {
             exception = psx;
         }
-        new TestWrapper<>(exception).isNotNull();
-        new TestWrapper<>(exception.getMessage()).equalTo(expected);
+        assert exception != null;
+        new TestAssert<>(exception.getMessage()).equalTo(expected);
     }
 
 }

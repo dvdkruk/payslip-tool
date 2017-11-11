@@ -36,7 +36,7 @@ public class PayslipRequestParser {
     /**
      * Exception message for parsing a superannuation rate without percent sign.
      */
-    public static final String NO_PERCNT_SUFF =
+    public static final String NO_PERCNT_SUFFX =
         "super rate must be suffixed with a % character";
     /**
      * Exception message for parsing an invalid month.
@@ -149,7 +149,7 @@ public class PayslipRequestParser {
         }
         if (rate.charAt(rate.length() - 1) != '%') {
             throw new PayslipException(
-                PayslipRequestParser.NO_PERCNT_SUFF
+                PayslipRequestParser.NO_PERCNT_SUFFX
             );
         }
         final String digits = rate.substring(0, rate.length() - 1);

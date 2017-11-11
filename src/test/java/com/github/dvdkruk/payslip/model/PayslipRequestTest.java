@@ -3,7 +3,7 @@
  */
 package com.github.dvdkruk.payslip.model;
 
-import com.github.dvdkruk.payslip.TestWrapper;
+import com.github.dvdkruk.payslip.TestAssert;
 import java.math.BigDecimal;
 import java.time.Month;
 import org.junit.Test;
@@ -67,7 +67,7 @@ public class PayslipRequestTest {
      */
     @Test
     public final void getMonth() {
-        new TestWrapper<>(PayslipRequestTest.LEONARDO_REQ.getMonth())
+        new TestAssert<>(PayslipRequestTest.LEONARDO_REQ.getMonth())
             .equalTo(Month.JANUARY);
     }
 
@@ -76,7 +76,7 @@ public class PayslipRequestTest {
      */
     @Test
     public final void getSuperRate() {
-        new TestWrapper<>(PayslipRequestTest.LEONARDO_REQ.getSuperRate())
+        new TestAssert<>(PayslipRequestTest.LEONARDO_REQ.getSuperRate())
             .equalTo(BigDecimal.ONE);
     }
 
@@ -85,7 +85,7 @@ public class PayslipRequestTest {
      */
     @Test
     public final void getAnnualSalary() {
-        new TestWrapper<>(PayslipRequestTest.LEONARDO_REQ.getAnnualSalary())
+        new TestAssert<>(PayslipRequestTest.LEONARDO_REQ.getAnnualSalary())
             .equalTo(BigDecimal.TEN);
     }
 
@@ -94,7 +94,7 @@ public class PayslipRequestTest {
      */
     @Test
     public final void getFullName() {
-        new TestWrapper<>(PayslipRequestTest.LEONARDO_REQ.getFullName())
+        new TestAssert<>(PayslipRequestTest.LEONARDO_REQ.getFullName())
             .equalTo(PayslipRequestTest.FULL_NAME);
     }
 
@@ -103,7 +103,7 @@ public class PayslipRequestTest {
      */
     @Test
     public final void getSurname() {
-        new TestWrapper<>(PayslipRequestTest.LEONARDO_REQ.getSurname())
+        new TestAssert<>(PayslipRequestTest.LEONARDO_REQ.getSurname())
             .equalTo(PayslipRequestTest.SURNAME);
     }
 
@@ -112,7 +112,7 @@ public class PayslipRequestTest {
      */
     @Test
     public final void getForename() {
-        new TestWrapper<>(PayslipRequestTest.LEONARDO_REQ.getForename())
+        new TestAssert<>(PayslipRequestTest.LEONARDO_REQ.getForename())
             .equalTo(PayslipRequestTest.LEONARDO);
     }
 
@@ -121,7 +121,7 @@ public class PayslipRequestTest {
      */
     @Test
     public final void toStringTest() {
-        new TestWrapper<>(PayslipRequestTest.GEORGE_REQ.toString())
+        new TestAssert<>(PayslipRequestTest.GEORGE_REQ.toString())
             .equalTo(PayslipRequestTest.GEORGE_LINE);
     }
 
@@ -130,8 +130,8 @@ public class PayslipRequestTest {
      */
     @Test
     public final void hashCodeCheck() {
-        final TestWrapper<Integer> wrapper =
-            new TestWrapper<>(PayslipRequestTest.GEORGE_REQ.hashCode());
+        final TestAssert<Integer> wrapper =
+            new TestAssert<>(PayslipRequestTest.GEORGE_REQ.hashCode());
         wrapper.equalTo(PayslipRequestTest.SAME_GEORGE_REQ.hashCode());
         wrapper.notEqualTo(PayslipRequestTest.LEONARDO_REQ.hashCode());
     }
@@ -141,8 +141,8 @@ public class PayslipRequestTest {
      */
     @Test
     public final void equalsCheck() {
-        final TestWrapper<PayslipRequest> wrapper =
-            new TestWrapper<>(PayslipRequestTest.GEORGE_REQ);
+        final TestAssert<PayslipRequest> wrapper =
+            new TestAssert<>(PayslipRequestTest.GEORGE_REQ);
         wrapper.equalTo(PayslipRequestTest.SAME_GEORGE_REQ);
         wrapper.notEqualTo(PayslipRequestTest.LEONARDO_REQ);
     }
@@ -156,13 +156,13 @@ public class PayslipRequestTest {
         final PayslipRequest request =
             new PayslipRequestParser(PayslipRequestTest.GEORGE_LINE)
             .toPayslipRequest();
-        new TestWrapper<>(request.getForename())
+        new TestAssert<>(request.getForename())
             .isSame(PayslipRequestTest.GEORGE);
-        new TestWrapper<>(request.getSurname())
+        new TestAssert<>(request.getSurname())
             .isSame(PayslipRequestTest.SURNAME);
-        new TestWrapper<>(request.getAnnualSalary()).isSame(BigDecimal.TEN);
-        new TestWrapper<>(request.getSuperRate()).isSame(BigDecimal.ONE);
-        new TestWrapper<>(request.getMonth()).isSame(Month.JANUARY);
+        new TestAssert<>(request.getAnnualSalary()).isSame(BigDecimal.TEN);
+        new TestAssert<>(request.getSuperRate()).isSame(BigDecimal.ONE);
+        new TestAssert<>(request.getMonth()).isSame(Month.JANUARY);
     }
 
     /**
@@ -208,8 +208,8 @@ public class PayslipRequestTest {
         } catch (final PayslipException pex) {
             exception = pex;
         }
-        new TestWrapper<>(exception).isNotNull();
-        new TestWrapper<>(exception.getMessage()).equalTo(expected);
+        assert exception != null;
+        new TestAssert<>(exception.getMessage()).equalTo(expected);
     }
 
     /**
@@ -236,7 +236,7 @@ public class PayslipRequestTest {
     }
 
     /**
-     * Create a {@link Employee} with the given {@code forname},
+     * Create a {@link Employee} with the given {@code forename},
      * {@link PayslipRequestTest#SURNAME} and {@link BigDecimal#TEN} as salary.
      *
      * @param forename The forename used in the {@link Employee}.

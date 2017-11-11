@@ -3,7 +3,7 @@
  */
 package com.github.dvdkruk.payslip.model;
 
-import com.github.dvdkruk.payslip.TestWrapper;
+import com.github.dvdkruk.payslip.TestAssert;
 import java.time.Month;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.Is;
@@ -54,8 +54,8 @@ public class PayslipResultTest {
      */
     @Test
     public final void equalsCheck() {
-        final TestWrapper wrapper =
-            new TestWrapper<>(PayslipResultTest.RESULT_EMMA);
+        final TestAssert<PayslipResult> wrapper =
+            new TestAssert<>(PayslipResultTest.RESULT_EMMA);
         wrapper.equalTo(PayslipResultTest.SAME_RESULT_EMMA);
         wrapper.notEqualTo(PayslipResultTest.RESULT_DANIEL);
     }
@@ -65,7 +65,8 @@ public class PayslipResultTest {
      */
     @Test
     public final void hashCodeCheck() {
-        final TestWrapper wrapper = new TestWrapper<>(RESULT_EMMA.hashCode());
+        final TestAssert<Integer> wrapper =
+            new TestAssert<>(RESULT_EMMA.hashCode());
         wrapper.isSame(SAME_RESULT_EMMA.hashCode());
         wrapper.isNotSame(RESULT_DANIEL.hashCode());
     }
@@ -97,7 +98,7 @@ public class PayslipResultTest {
      */
     @Test
     public final void getMonth() {
-        new TestWrapper<>(RESULT_EMMA.getMonth())
+        new TestAssert<>(RESULT_EMMA.getMonth())
             .isSame(Month.FEBRUARY);
     }
 
@@ -106,7 +107,7 @@ public class PayslipResultTest {
      */
     @Test
     public final void getGrossIncome() {
-        new TestWrapper<>(RESULT_EMMA.getSalary())
+        new TestAssert<>(RESULT_EMMA.getSalary())
             .isSame(PayslipResultTest.SALARY);
     }
 
@@ -115,7 +116,7 @@ public class PayslipResultTest {
      */
     @Test
     public final void getIncomeTax() {
-        new TestWrapper<>(RESULT_EMMA.getTax()).isSame(PayslipResultTest.TAX);
+        new TestAssert<>(RESULT_EMMA.getTax()).isSame(PayslipResultTest.TAX);
     }
 
     /**

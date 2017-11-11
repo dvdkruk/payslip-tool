@@ -7,7 +7,6 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNot;
-import org.hamcrest.core.IsNull;
 
 /**
  * A class for wrapping objects for tests.
@@ -16,7 +15,7 @@ import org.hamcrest.core.IsNull;
  * @param <T> Type of te wrapped object.
  * @since 1.0
  */
-public final class TestWrapper<T> {
+public final class TestAssert<T> {
 
     /**
      * Wrapped {@link Object} used in the tests.
@@ -28,7 +27,7 @@ public final class TestWrapper<T> {
      *
      * @param obj An {@link T};
      */
-    public TestWrapper(final T obj) {
+    public TestAssert(final T obj) {
         this.obj = obj;
     }
 
@@ -70,10 +69,4 @@ public final class TestWrapper<T> {
         MatcherAssert.assertThat(this.obj, IsNot.not(that));
     }
 
-    /**
-     * Checks if the wrapper object is not null.
-     */
-    public void isNotNull() {
-        MatcherAssert.assertThat(this.obj, IsNull.notNullValue());
-    }
 }
