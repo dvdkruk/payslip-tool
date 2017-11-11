@@ -16,7 +16,6 @@ import java.util.Locale;
  * @since 1.0
  */
 public class PayslipRequestParser {
-
     /**
      * Parse token length.
      */
@@ -66,67 +65,68 @@ public class PayslipRequestParser {
     /**
      * Comma.
      */
-    private static final String SEPARATOR = ",";
+    private static final String COMMA = ",";
 
     /**
-     * Arg to parse.
+     * Line to parse.
      */
-    private final String arg;
+    private final String line;
 
     /**
-     * Payslip request parser.
+     * Payslip request parser for {@code line}.
      *
-     * @param arg Argument to parse.
+     * @param line Parse this line.
      */
-    public PayslipRequestParser(final String arg) {
-        this.arg = arg;
+    public PayslipRequestParser(final String line) {
+        this.line = line;
     }
 
     /**
-     * Parses the string argument as a payslip request. A parsable string
-     * should have the following format: &lt;forename&gt;,&lt;surname&gt;,
-     * &lt;annual_salary&gt;,&lt;super_rate&gt;$,&lt;month&gt;
+     * Parses {@link PayslipRequestParser#line} to a {@link PayslipRequest}.
+     * Allowed format: {@code
+     * <forename>,<surname>,<annual_salary>,<super_rate>%,<month>};
      *
-     * @return The payslip request representing by the string argument.
-     * @throws PayslipException If the string does not contain a parsable
-     *  payslip request.
+     * @return A {@link PayslipRequest} that represents {@link
+     *  PayslipRequestParser#line}.
+     * @throws PayslipException When {@link PayslipRequestParser#line} is not
+     *  parsable.
      */
     public final PayslipRequest toPayslipRequest() {
-        if (this.arg == null) {
+        if (this.line == null) {
             throw new PayslipException("null");
         }
-        final String[] split = this.arg.split(PayslipRequestParser.SEPARATOR);
-        final String[] args = Arrays.stream(split)
+        final String[] elements = this.line.split(PayslipRequestParser.COMMA);
+        final String[] element = Arrays.stream(elements)
             .map(String::trim)
             .filter(e -> !e.isEmpty())
             .toArray(String[]::new);
-        if (args.length != PayslipRequestParser.PARSE_LEN) {
+        if (element.length != PayslipRequestParser.PARSE_LEN) {
             throw new PayslipException(PayslipRequestParser.INVAL_ELMNT_AMNT);
         }
-        return PayslipRequestParser.parse(args);
+        return PayslipRequestParser.parse(element);
     }
 
     /**
-     * Parse args array into {@code PayslipRequest}.
+     * Parse {@code elements} into {@code PayslipRequest}.
      *
-     * @param args Arguments array to parse from.
-     * @return Payslip request.
+     * @param elements Parse this array.
+     * @return A {@link PayslipRequest}.
      */
-    private static PayslipRequest parse(final String... args) {
-        final Employee employee = parseEmployee(args);
-        final BigDecimal rate = parseSuperRate(args);
-        final Month month = parseMonth(args);
+    private static PayslipRequest parse(final String... elements) {
+        final Employee employee = parseEmployee(elements);
+        final BigDecimal rate = parseSuperRate(elements);
+        final Month month = parseMonth(elements);
         return new PayslipRequest(employee, rate, month);
     }
 
     /**
-     * Parse month rate from given args array.
+     * Parse month from {@code elements}.
      *
-     * @param args Arguments array to pick and parse from.
+     * @param elements Pick and parse month from this array.
      * @return Month.
      */
-    private static Month parseMonth(final String... args) {
-        final String month = args[PayslipRequestParser.MONTH_I];
+    private static Month parseMonth(final String... elements) {
+        final String month = elements[PayslipRequestParser.MONTH_I];
         try {
             return Month.valueOf(month.toUpperCase(Locale.getDefault()));
         } catch (final IllegalArgumentException iae) {
@@ -137,13 +137,13 @@ public class PayslipRequestParser {
     }
 
     /**
-     * Parse superannuation rate from given args array.
+     * Parse superannuation rate from {@code elements}.
      *
-     * @param args Arguments array to pick and parse from.
+     * @param elements Pick and parse superannuation rate from this array.
      * @return Superannuation rate.
      */
-    private static BigDecimal parseSuperRate(final String... args) {
-        final String rate = args[PayslipRequestParser.SUPER_RATE_I];
+    private static BigDecimal parseSuperRate(final String... elements) {
+        final String rate = elements[PayslipRequestParser.SUPER_RATE_I];
         if (rate.length() < 2) {
             throw new PayslipException(PayslipRequestParser.INVAL_SUPER_RATE);
         }
@@ -157,48 +157,49 @@ public class PayslipRequestParser {
     }
 
     /**
-     * Parse employee from given args array.
+     * Parse employee from given {@code elements}.
      *
-     * @param args Arguments array to pick and parse from.
+     * @param elements Pick and parse employee from this array.
      * @return Employee.
      */
-    private static Employee parseEmployee(final String... args) {
+    private static Employee parseEmployee(final String... elements) {
         final String forename =
-            args[PayslipRequestParser.FORENAME_I];
+            elements[PayslipRequestParser.FORENAME_I];
         final String surname =
-            args[PayslipRequestParser.SURNAME_I];
-        final BigDecimal salary = parseAnnualSalary(args);
+            elements[PayslipRequestParser.SURNAME_I];
+        final BigDecimal salary = parseAnnualSalary(elements);
         return new Employee(forename, surname, salary);
     }
 
     /**
-     * Parse annual salary from the given args array.
+     * Parses the annual salary from {@code elements}.
      *
-     * @param args Arguments array to pick and parse from.
+     * @param elements Pick and parse the annual salary from this array.
      * @return Annual salary.
      */
-    private static BigDecimal parseAnnualSalary(final String... args) {
-        final String salary = args[PayslipRequestParser.ANNUAL_SALARY_I];
+    private static BigDecimal parseAnnualSalary(final String... elements) {
+        final String salary = elements[PayslipRequestParser.ANNUAL_SALARY_I];
         return parseBigDecimal(salary, "annual salary");
     }
 
     /**
-     * Parse arg into a decimal.
+     * Parses {@code element} into a decimal.
      *
-     * @param arg Argument to parse.
-     * @param field Field shown when arg is not parable to a BigDecimal.
-     * @return Arg as BigDecimal.
+     * @param element Parses this element into {@link BigDecimal}.
+     * @param field When {@code element} is not parable into {@link
+     *  BigDecimal}, this field is shown in the exception message.
+     * @return A {@link BigDecimal} with the value of {@code element}.
      */
     private static BigDecimal parseBigDecimal(
-        final String arg,
+        final String element,
         final String field) {
         try {
-            return new BigDecimal(arg);
+            return new BigDecimal(element);
         } catch (final NumberFormatException nfe) {
             final String msg = String.format(
                 "cannot parse %s '%s' into a number",
                 field,
-                arg
+                element
             );
             throw new PayslipException(msg, nfe);
         }

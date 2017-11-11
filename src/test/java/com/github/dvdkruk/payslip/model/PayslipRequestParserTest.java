@@ -18,7 +18,7 @@ import org.junit.jupiter.params.provider.ValueSource;
  */
 public final class PayslipRequestParserTest {
     /**
-     * A forneame.
+     * A forename.
      */
     private static final String FORENAME = "Jennifer";
     /**
