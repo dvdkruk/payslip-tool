@@ -1,75 +1,173 @@
+/**
+ * Copyright (c) 2017, Damiaan van der Kruk.
+ */
 package com.github.dvdkruk.payslip.model;
 
+import java.time.Month;
+import org.junit.Assert;
 import org.junit.Test;
 
-import java.time.Month;
-
-import static org.junit.Assert.*;
-
+/**
+ * Unit tests for {@link PayslipResult}.
+ * @author Damiaan Van Der Kruk (Damiaan.van.der.Kruk@gmail.com)
+ * @version $Id$
+ * @since 1.0
+ */
 public class PayslipResultTest {
 
-    private final PayslipResult emma0 = new PayslipResult(
-        "Emma Stone",
-        Month.FEBRUARY,
-        new FinancialInformation(5004, 922, 450)
-    );
-    private final PayslipResult emma1 = new PayslipResult(
-        "Emma Stone",
-        Month.FEBRUARY,
-        new FinancialInformation(5004, 922, 450)
-    );
-    private final PayslipResult daniel0 = new PayslipResult(
-        "Daniel Craig",
-        Month.FEBRUARY,
-        new FinancialInformation(5004, 922, 450)
-    );
+    /**
+     * An example {@link PayslipResult} for Emma Stone.
+     */
+    private static final PayslipResult RESULT_EMMA =
+        createPayslipResult(PayslipResultTest.FULL_NAME_EMMA);
 
+    /**
+     * An example {@link PayslipResult} for Emma Stone, should be equal to
+     * {@link PayslipResultTest#RESULT_EMMA}.
+     */
+    private static final PayslipResult SAME_RESULT_EMMA =
+        createPayslipResult(PayslipResultTest.FULL_NAME_EMMA);
+
+    /**
+     * An example {@link PayslipResult} for Daniel Craig.
+     */
+    private static final PayslipResult RESULT_DANIEL =
+        createPayslipResult("Daniel Craig");
+
+    /**
+     * Fore- and surname of Emma Stone.
+     */
+    private static final String FULL_NAME_EMMA = "Emma Stone";
+
+    /**
+     * An example monthly salary.
+     */
+    private static final int SALARY = 5004;
+
+    /**
+     * An example income tax amount.
+     */
+    private static final int TAX = 992;
+
+    /**
+     * An example monthly superannuation contribution.
+     */
+    private static final int SUPER = 450;
+
+    /**
+     * Tests {@link PayslipResult#equals(Object)}.
+     */
     @Test
-    public void equals() throws Exception {
-        assertTrue(emma0.equals(emma1));
-        assertTrue(emma1.equals(emma0));
-        assertFalse(emma0.equals(daniel0));
+    public final void equals() {
+        Assert.assertTrue(RESULT_EMMA.equals(SAME_RESULT_EMMA));
+        Assert.assertTrue(SAME_RESULT_EMMA.equals(RESULT_EMMA));
+        Assert.assertFalse(RESULT_EMMA.equals(RESULT_DANIEL));
     }
 
+    /**
+     * Tests {@link PayslipResult#hashCode()}.
+     */
     @Test
-    public void hashCodeCheck() throws Exception {
-        assertEquals(emma0.hashCode(), emma1.hashCode());
-        assertNotEquals(emma0.hashCode(), daniel0.hashCode());
+    public final void hashCodeCheck() {
+        Assert.assertEquals(
+            RESULT_EMMA.hashCode(),
+            SAME_RESULT_EMMA.hashCode()
+        );
+        Assert.assertNotEquals(
+            RESULT_EMMA.hashCode(),
+            RESULT_DANIEL.hashCode()
+        );
     }
 
+    /**
+     * Tests {@link PayslipResult#getNetIncome()}.
+     */
     @Test
-    public void toStringCheck() throws Exception {
-        assertEquals("Emma Stone,01 February - 28 February,5004,922,4082,450", emma0.toString());
+    public final void toStringCheck() {
+        Assert.assertEquals(
+            "Emma Stone,01 February - 28 February,5004,992,4012,450",
+            RESULT_EMMA.toString()
+        );
     }
 
+    /**
+     * Tests {@link PayslipResult#getName()}.
+     */
     @Test
-    public void getFullName() throws Exception {
-        assertEquals("Emma Stone", emma0.getName());
+    public final void getFullName() {
+        Assert.assertEquals(
+            PayslipResultTest.FULL_NAME_EMMA,
+            RESULT_EMMA.getName()
+        );
     }
 
+    /**
+     * Tests {@link PayslipResult#getMonth()}.
+     */
     @Test
-    public void getMonth() throws Exception {
-        assertEquals(Month.FEBRUARY, emma0.getMonth());
+    public final void getMonth() {
+        Assert.assertEquals(Month.FEBRUARY, RESULT_EMMA.getMonth());
     }
 
+    /**
+     * Tests {@link PayslipResult#getSalary()}.
+     */
     @Test
-    public void getGrossIncome() throws Exception {
-        assertEquals(5004, emma0.getSalary());
+    public final void getGrossIncome() {
+        Assert.assertEquals(PayslipResultTest.SALARY, RESULT_EMMA.getSalary());
     }
 
+    /**
+     * Tests {@link PayslipResult#getNetIncome()}.
+     */
     @Test
-    public void getIncomeTax() throws Exception {
-        assertEquals(922, emma0.getTax());
+    public final void getIncomeTax() {
+        Assert.assertEquals(PayslipResultTest.TAX, RESULT_EMMA.getTax());
     }
 
+    /**
+     * Tests {@link PayslipResult#getNetIncome()}.
+     */
     @Test
-    public void getNetIncome() throws Exception {
-        assertEquals(5004 - 922, emma0.getNetIncome());
+    public final void getNetIncome() {
+        final int expected = PayslipResultTest.SALARY - PayslipResultTest.TAX;
+        Assert.assertEquals(expected, RESULT_EMMA.getNetIncome());
     }
 
+    /**
+     * Tests {@link PayslipResult#getSuperannuation()}.
+     */
     @Test
-    public void getMonthlySuper() throws Exception {
-        assertEquals(450, emma0.getSuperannuation());
+    public final void getMonthlySuper() {
+        Assert.assertEquals(
+            PayslipResultTest.SUPER,
+            RESULT_EMMA.getSuperannuation()
+        );
+    }
+
+    /**
+     * Create a {@link PayslipResult} with the given {@code name}.
+     * @param name The name used in the {@link PayslipResult}.
+     * @return A {@link PayslipResult}.
+     */
+    private static PayslipResult createPayslipResult(final String name) {
+        return new PayslipResult(
+            name,
+            Month.FEBRUARY,
+            createFinancialInformation()
+        );
+    }
+
+    /**
+     * Creates an example {@link FinancialInformation} result set.
+     * @return An example {@link FinancialInformation} result set.
+     */
+    private static FinancialInformation createFinancialInformation() {
+        return new FinancialInformation(
+            PayslipResultTest.SALARY,
+            PayslipResultTest.TAX,
+            PayslipResultTest.SUPER
+        );
     }
 
 }
