@@ -65,8 +65,7 @@ public class PayslipRequestTest {
      */
     @Test
     public final void getMonth() {
-        new TestAssert<>(PayslipRequestTest.LEONARDO_REQ.getMonth())
-            .equalTo(Month.JANUARY);
+        new TestAssert<>(LEONARDO_REQ.getMonth()).equalTo(Month.JANUARY);
     }
 
     /**
@@ -74,8 +73,7 @@ public class PayslipRequestTest {
      */
     @Test
     public final void getSuperRate() {
-        new TestAssert<>(PayslipRequestTest.LEONARDO_REQ.getSuperRate())
-            .equalTo(BigDecimal.ONE);
+        new TestAssert<>(LEONARDO_REQ.getSuperRate()).equalTo(BigDecimal.ONE);
     }
 
     /**
@@ -83,7 +81,7 @@ public class PayslipRequestTest {
      */
     @Test
     public final void getAnnualSalary() {
-        new TestAssert<>(PayslipRequestTest.LEONARDO_REQ.getAnnualSalary())
+        new TestAssert<>(LEONARDO_REQ.getAnnualSalary())
             .equalTo(BigDecimal.TEN);
     }
 
@@ -92,7 +90,7 @@ public class PayslipRequestTest {
      */
     @Test
     public final void getFullName() {
-        new TestAssert<>(PayslipRequestTest.LEONARDO_REQ.getFullName())
+        new TestAssert<>(LEONARDO_REQ.getFullName())
             .equalTo(PayslipRequestTest.FULL_NAME);
     }
 
@@ -101,7 +99,7 @@ public class PayslipRequestTest {
      */
     @Test
     public final void getSurname() {
-        new TestAssert<>(PayslipRequestTest.LEONARDO_REQ.getSurname())
+        new TestAssert<>(LEONARDO_REQ.getSurname())
             .equalTo(PayslipRequestTest.SURNAME);
     }
 
@@ -110,7 +108,7 @@ public class PayslipRequestTest {
      */
     @Test
     public final void getForename() {
-        new TestAssert<>(PayslipRequestTest.LEONARDO_REQ.getForename())
+        new TestAssert<>(LEONARDO_REQ.getForename())
             .equalTo(PayslipRequestTest.LEONARDO);
     }
 
@@ -119,7 +117,7 @@ public class PayslipRequestTest {
      */
     @Test
     public final void toStringTest() {
-        new TestAssert<>(PayslipRequestTest.GEORGE_REQ.toString())
+        new TestAssert<>(GEORGE_REQ.toString())
             .equalTo(PayslipRequestTest.GEORGE_LINE);
     }
 
@@ -128,10 +126,10 @@ public class PayslipRequestTest {
      */
     @Test
     public final void hashCodeCheck() {
-        final TestAssert<Integer> wrapper =
-            new TestAssert<>(PayslipRequestTest.GEORGE_REQ.hashCode());
-        wrapper.equalTo(PayslipRequestTest.SAME_GEORGE_REQ.hashCode());
-        wrapper.notEqualTo(PayslipRequestTest.LEONARDO_REQ.hashCode());
+        final TestAssert<Integer> request =
+            new TestAssert<>(GEORGE_REQ.hashCode());
+        request.equalTo(SAME_GEORGE_REQ.hashCode());
+        request.notEqualTo(LEONARDO_REQ.hashCode());
     }
 
     /**
@@ -139,10 +137,10 @@ public class PayslipRequestTest {
      */
     @Test
     public final void equalsCheck() {
-        final TestAssert<PayslipRequest> wrapper =
+        final TestAssert<PayslipRequest> request =
             new TestAssert<>(PayslipRequestTest.GEORGE_REQ);
-        wrapper.equalTo(PayslipRequestTest.SAME_GEORGE_REQ);
-        wrapper.notEqualTo(PayslipRequestTest.LEONARDO_REQ);
+        request.equalTo(PayslipRequestTest.SAME_GEORGE_REQ);
+        request.notEqualTo(PayslipRequestTest.LEONARDO_REQ);
     }
 
     /**

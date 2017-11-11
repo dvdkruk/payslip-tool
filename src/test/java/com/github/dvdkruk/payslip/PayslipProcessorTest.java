@@ -41,11 +41,6 @@ public class PayslipProcessorTest {
     );
 
     /**
-     * A default {@link PayslipProcessor} object.
-     */
-    private static final PayslipProcessor PROCESSOR = new PayslipProcessor();
-
-    /**
      * Checks that a {@link PayslipException} with message {@link
      * PayslipProcessor#INVAL_FORENAME} is thrown for invalid forenames.
      *
@@ -126,9 +121,8 @@ public class PayslipProcessorTest {
     public final void validateRequest(final String input, final String output) {
         final PayslipRequest request = new PayslipRequestParser(input)
             .toPayslipRequest();
-        new TestAssert<>(
-            PayslipProcessorTest.PROCESSOR.process(request).toString()
-        ).equalTo(output);
+        new TestAssert<>(new PayslipProcessor().process(request).toString())
+            .equalTo(output);
     }
 
     /**

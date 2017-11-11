@@ -99,7 +99,7 @@ final class PayslipCli {
      * @return True when string is null or empty, else it returns false.
      */
     private static boolean isNullOrEmpty(final String string) {
-        return string == null || string.isEmpty();
+        return string == null || string.trim().isEmpty();
     }
 
     /**

@@ -5,8 +5,6 @@ package com.github.dvdkruk.payslip.model;
 
 import com.github.dvdkruk.payslip.TestAssert;
 import java.time.Month;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.core.Is;
 import org.junit.Test;
 
 /**
@@ -15,7 +13,7 @@ import org.junit.Test;
  * @version $Id$
  * @since 1.0
  */
-public class PayslipResultTest {
+public final class PayslipResultTest {
     /**
      * An example {@link PayslipResult} for Emma Stone.
      */
@@ -53,60 +51,55 @@ public class PayslipResultTest {
      * Tests {@link PayslipResult#equals(Object)}.
      */
     @Test
-    public final void equalsCheck() {
-        final TestAssert<PayslipResult> wrapper =
+    public void equalsCheck() {
+        final TestAssert<PayslipResult> result =
             new TestAssert<>(PayslipResultTest.RESULT_EMMA);
-        wrapper.equalTo(PayslipResultTest.SAME_RESULT_EMMA);
-        wrapper.notEqualTo(PayslipResultTest.RESULT_DANIEL);
+        result.equalTo(PayslipResultTest.SAME_RESULT_EMMA);
+        result.notEqualTo(PayslipResultTest.RESULT_DANIEL);
     }
 
     /**
      * Tests {@link PayslipResult#hashCode()}.
      */
     @Test
-    public final void hashCodeCheck() {
-        final TestAssert<Integer> wrapper =
+    public void hashCodeCheck() {
+        final TestAssert<Integer> result =
             new TestAssert<>(RESULT_EMMA.hashCode());
-        wrapper.isSame(SAME_RESULT_EMMA.hashCode());
-        wrapper.isNotSame(RESULT_DANIEL.hashCode());
+        result.isSame(SAME_RESULT_EMMA.hashCode());
+        result.isNotSame(RESULT_DANIEL.hashCode());
     }
 
     /**
      * Tests {@link PayslipResult#getNetIncome()}.
      */
     @Test
-    public final void toStringCheck() {
-        MatcherAssert.assertThat(
-            RESULT_EMMA.toString(),
-            Is.is("Emma Stone,01 February - 28 February,5004,992,4012,450")
-        );
+    public void toStringCheck() {
+        new TestAssert<>(RESULT_EMMA.toString())
+            .equalTo("Emma Stone,01 May - 31 May,5004,992,4012,450");
     }
 
     /**
      * Tests {@link PayslipResult#getName()}.
      */
     @Test
-    public final void getFullName() {
-        MatcherAssert.assertThat(
-            RESULT_EMMA.getName(),
-            Is.is(PayslipResultTest.FULL_NAME_EMMA)
-        );
+    public void getFullName() {
+        new TestAssert<>(RESULT_EMMA.getName())
+            .equalTo(PayslipResultTest.FULL_NAME_EMMA);
     }
 
     /**
      * Tests {@link PayslipResult#getMonth()}.
      */
     @Test
-    public final void getMonth() {
-        new TestAssert<>(RESULT_EMMA.getMonth())
-            .isSame(Month.FEBRUARY);
+    public void getMonth() {
+        new TestAssert<>(RESULT_EMMA.getMonth()).isSame(Month.MAY);
     }
 
     /**
      * Tests {@link PayslipResult#getSalary()}.
      */
     @Test
-    public final void getGrossIncome() {
+    public void getGrossIncome() {
         new TestAssert<>(RESULT_EMMA.getSalary())
             .isSame(PayslipResultTest.SALARY);
     }
@@ -115,7 +108,7 @@ public class PayslipResultTest {
      * Tests {@link PayslipResult#getNetIncome()}.
      */
     @Test
-    public final void getIncomeTax() {
+    public void getIncomeTax() {
         new TestAssert<>(RESULT_EMMA.getTax()).isSame(PayslipResultTest.TAX);
     }
 
@@ -123,18 +116,18 @@ public class PayslipResultTest {
      * Tests {@link PayslipResult#getNetIncome()}.
      */
     @Test
-    public final void getNetIncome() {
-        final int expected = PayslipResultTest.SALARY - PayslipResultTest.TAX;
-        MatcherAssert.assertThat(RESULT_EMMA.getNetIncome(), Is.is(expected));
+    public void getNetIncome() {
+        new TestAssert<>(RESULT_EMMA.getNetIncome())
+            .equalTo(PayslipResultTest.SALARY - PayslipResultTest.TAX);
     }
 
     /**
      * Tests {@link PayslipResult#getSuperannuation()}.
      */
     @Test
-    public final void getMonthlySuper() {
-        final int superann = PayslipResultTest.RESULT_EMMA.getSuperannuation();
-        MatcherAssert.assertThat(superann, Is.is(PayslipResultTest.SUPER));
+    public void getMonthlySuper() {
+        new TestAssert<>(RESULT_EMMA.getSuperannuation())
+            .equalTo(PayslipResultTest.SUPER);
     }
 
     /**
@@ -143,11 +136,7 @@ public class PayslipResultTest {
      * @return A {@link PayslipResult}.
      */
     private static PayslipResult createPayslipResult(final String name) {
-        return new PayslipResult(
-            name,
-            Month.FEBRUARY,
-            createFinancialInformation()
-        );
+        return new PayslipResult(name, Month.MAY, createFinancialInformation());
     }
 
     /**
