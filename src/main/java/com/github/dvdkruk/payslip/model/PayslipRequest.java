@@ -19,7 +19,6 @@ import java.util.Objects;
  * @since 1.0
  */
 public class PayslipRequest {
-
     /**
      * Separator used in the string representation.
      */
@@ -29,12 +28,10 @@ public class PayslipRequest {
      * Employee.
      */
     private final Employee employee;
-
     /**
      * Superannuation rate.
      */
     private final BigDecimal rate;
-
     /**
      * Calculate payslip for this month.
      */

@@ -4,7 +4,10 @@
 package com.github.dvdkruk.payslip.model;
 
 import java.time.Month;
-import org.junit.Assert;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.core.Is;
+import org.hamcrest.core.IsEqual;
+import org.hamcrest.core.IsNot;
 import org.junit.Test;
 
 /**
@@ -14,41 +17,34 @@ import org.junit.Test;
  * @since 1.0
  */
 public class PayslipResultTest {
-
     /**
      * An example {@link PayslipResult} for Emma Stone.
      */
     private static final PayslipResult RESULT_EMMA =
         createPayslipResult(PayslipResultTest.FULL_NAME_EMMA);
-
     /**
      * An example {@link PayslipResult} for Emma Stone, should be equal to
      * {@link PayslipResultTest#RESULT_EMMA}.
      */
     private static final PayslipResult SAME_RESULT_EMMA =
         createPayslipResult(PayslipResultTest.FULL_NAME_EMMA);
-
     /**
      * An example {@link PayslipResult} for Daniel Craig.
      */
     private static final PayslipResult RESULT_DANIEL =
         createPayslipResult("Daniel Craig");
-
     /**
      * Fore- and surname of Emma Stone.
      */
     private static final String FULL_NAME_EMMA = "Emma Stone";
-
     /**
      * An example monthly salary.
      */
     private static final int SALARY = 5004;
-
     /**
      * An example income tax amount.
      */
     private static final int TAX = 992;
-
     /**
      * An example monthly superannuation contribution.
      */
@@ -58,10 +54,15 @@ public class PayslipResultTest {
      * Tests {@link PayslipResult#equals(Object)}.
      */
     @Test
-    public final void equals() {
-        Assert.assertTrue(RESULT_EMMA.equals(SAME_RESULT_EMMA));
-        Assert.assertTrue(SAME_RESULT_EMMA.equals(RESULT_EMMA));
-        Assert.assertFalse(RESULT_EMMA.equals(RESULT_DANIEL));
+    public final void equalsCheck() {
+        equalsCheck(
+            PayslipResultTest.RESULT_EMMA,
+            PayslipResultTest.SAME_RESULT_EMMA
+        );
+        notEqualsCheck(
+            PayslipResultTest.RESULT_EMMA,
+            PayslipResultTest.RESULT_DANIEL
+        );
     }
 
     /**
@@ -69,13 +70,13 @@ public class PayslipResultTest {
      */
     @Test
     public final void hashCodeCheck() {
-        Assert.assertEquals(
+        MatcherAssert.assertThat(
             RESULT_EMMA.hashCode(),
-            SAME_RESULT_EMMA.hashCode()
+            Is.is(SAME_RESULT_EMMA.hashCode())
         );
-        Assert.assertNotEquals(
+        MatcherAssert.assertThat(
             RESULT_EMMA.hashCode(),
-            RESULT_DANIEL.hashCode()
+            IsNot.not(RESULT_DANIEL.hashCode())
         );
     }
 
@@ -84,9 +85,9 @@ public class PayslipResultTest {
      */
     @Test
     public final void toStringCheck() {
-        Assert.assertEquals(
-            "Emma Stone,01 February - 28 February,5004,992,4012,450",
-            RESULT_EMMA.toString()
+        MatcherAssert.assertThat(
+            RESULT_EMMA.toString(),
+            Is.is("Emma Stone,01 February - 28 February,5004,992,4012,450")
         );
     }
 
@@ -95,9 +96,9 @@ public class PayslipResultTest {
      */
     @Test
     public final void getFullName() {
-        Assert.assertEquals(
-            PayslipResultTest.FULL_NAME_EMMA,
-            RESULT_EMMA.getName()
+        MatcherAssert.assertThat(
+            RESULT_EMMA.getName(),
+            Is.is(PayslipResultTest.FULL_NAME_EMMA)
         );
     }
 
@@ -106,7 +107,7 @@ public class PayslipResultTest {
      */
     @Test
     public final void getMonth() {
-        Assert.assertEquals(Month.FEBRUARY, RESULT_EMMA.getMonth());
+        MatcherAssert.assertThat(RESULT_EMMA.getMonth(), Is.is(Month.FEBRUARY));
     }
 
     /**
@@ -114,7 +115,10 @@ public class PayslipResultTest {
      */
     @Test
     public final void getGrossIncome() {
-        Assert.assertEquals(PayslipResultTest.SALARY, RESULT_EMMA.getSalary());
+        MatcherAssert.assertThat(
+            RESULT_EMMA.getSalary(),
+            Is.is(PayslipResultTest.SALARY)
+        );
     }
 
     /**
@@ -122,7 +126,10 @@ public class PayslipResultTest {
      */
     @Test
     public final void getIncomeTax() {
-        Assert.assertEquals(PayslipResultTest.TAX, RESULT_EMMA.getTax());
+        MatcherAssert.assertThat(
+            RESULT_EMMA.getTax(),
+            Is.is(PayslipResultTest.TAX)
+        );
     }
 
     /**
@@ -131,7 +138,7 @@ public class PayslipResultTest {
     @Test
     public final void getNetIncome() {
         final int expected = PayslipResultTest.SALARY - PayslipResultTest.TAX;
-        Assert.assertEquals(expected, RESULT_EMMA.getNetIncome());
+        MatcherAssert.assertThat(RESULT_EMMA.getNetIncome(), Is.is(expected));
     }
 
     /**
@@ -139,10 +146,8 @@ public class PayslipResultTest {
      */
     @Test
     public final void getMonthlySuper() {
-        Assert.assertEquals(
-            PayslipResultTest.SUPER,
-            RESULT_EMMA.getSuperannuation()
-        );
+        final int superann = PayslipResultTest.RESULT_EMMA.getSuperannuation();
+        MatcherAssert.assertThat(superann, Is.is(PayslipResultTest.SUPER));
     }
 
     /**
@@ -168,6 +173,28 @@ public class PayslipResultTest {
             PayslipResultTest.TAX,
             PayslipResultTest.SUPER
         );
+    }
+
+    /**
+     * Checks if {@code obj} is not equal to {@code that}.
+     *
+     * @param obj Object used in the not equals test.
+     * @param that Another object used in the not equals test.
+     */
+    private static void notEqualsCheck(final Object obj, final Object that) {
+        MatcherAssert.assertThat(obj, IsNot.not(IsEqual.equalTo(that)));
+        MatcherAssert.assertThat(that, IsNot.not(IsEqual.equalTo(obj)));
+    }
+
+    /**
+     * Checks if {@code obj} is equal to {@code that}.
+     *
+     * @param obj Object used in the equals test.
+     * @param that Another object used in the equals test.
+     */
+    private static void equalsCheck(final Object obj, final Object that) {
+        MatcherAssert.assertThat(obj, IsEqual.equalTo(that));
+        MatcherAssert.assertThat(that, IsEqual.equalTo(obj));
     }
 
 }

@@ -24,6 +24,32 @@ import java.util.NoSuchElementException;
  * @since 1.0
  */
 public class PayslipProcessor {
+    /**
+     * Exception message for null request.
+     */
+    public static final String REQUEST_NULL = "Request is null";
+    /**
+     * Exception message for invalid forename.
+     */
+    public static final String INVALID_FORENAME = "First name is null or empty";
+    /**
+     * Exception message for invalid surname.
+     */
+    public static final String INVALID_SURNAME = "Last name is null or empty";
+    /**
+     * Exception message for invalid salary.
+     */
+    public static final String INVALID_SALARY =
+        "Salary must be bigger than zero";
+    /**
+     * Exception message for null superannuation rate.
+     */
+    public static final String SUPER_RATE_NULL = "Super rate is null";
+    /**
+     * Exception message for invalid superannuation rate range.
+     */
+    public static final String INVALID_SUPER_RATE =
+        "Super rate must be between 0% - 50%";
 
     /**
      * Amount of months.
@@ -41,12 +67,6 @@ public class PayslipProcessor {
      * Scale for calculations.
      */
     private static final int SCALE = 99;
-    public static final String REQUEST_NULL = "Request is null";
-    public static final String INVALID_FORENAME = "First name is null or empty";
-    public static final String INVALID_SURNAME = "Last name is null or empty";
-    public static final String INVALID_SALARY = "Salary must be bigger than zero";
-    public static final String SUPER_RATE_NULL = "Super rate is null";
-    public static final String INVALID_SUPER_RATE = "Super rate must be between 0% - 50%";
 
     /**
      * List containing all the income tax rules for the calculation.

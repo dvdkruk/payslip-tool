@@ -16,6 +16,33 @@ import java.util.Locale;
  * @since 1.0
  */
 public class PayslipRequestParser {
+
+    /**
+     * Parse token length.
+     */
+    public static final int PARSE_LEN = 5;
+    /**
+     * Exception message for parsing an invalid amount of elements.
+     */
+    public static final String INVALID_ELEMENT_AMOUNT = String.format(
+        "a payslip request must consist of %s (non empty) elements",
+        PARSE_LEN
+    );
+    /**
+     * Exception message parsing an invalid superannuation rate.
+     */
+    public static final String INVALID_SUPER_RATE =
+        "super rate must have at least 1 number & end with a %";
+    /**
+     * Exception message for parsing a superannuation rate without percent sign.
+     */
+    public static final String NO_PERCENTAGE_SUFFIX =
+        "super rate must be suffixed with a % character";
+    /**
+     * Exception message for parsing an invalid month.
+     */
+    public static final String INVALID_MONTH = "%s is an invalid month";
+
     /**
      * Parse index of forename.
      */
@@ -36,10 +63,6 @@ public class PayslipRequestParser {
      * Parse index of month.
      */
     private static final int MONTH_I = 4;
-    /**
-     * Parse token length.
-     */
-    private static final int PARSE_LEN = 5;
     /**
      * Comma.
      */
@@ -78,11 +101,7 @@ public class PayslipRequestParser {
             .filter(e -> !e.isEmpty())
             .toArray(String[]::new);
         if (args.length != PayslipRequestParser.PARSE_LEN) {
-            final String msg = String.format(
-                "a payslip request must consist of %s (non empty) elements",
-                PayslipRequestParser.PARSE_LEN
-            );
-            throw new PayslipException(msg);
+            throw new PayslipException(INVALID_ELEMENT_AMOUNT);
         }
         return PayslipRequestParser.parse(args);
     }
@@ -111,7 +130,8 @@ public class PayslipRequestParser {
         try {
             return Month.valueOf(month.toUpperCase(Locale.getDefault()));
         } catch (final IllegalArgumentException iae) {
-            final String msg = String.format("%s is an invalid month", month);
+            final String msg =
+                String.format(PayslipRequestParser.INVALID_MONTH, month);
             throw new PayslipException(msg, iae);
         }
     }
@@ -125,13 +145,11 @@ public class PayslipRequestParser {
     private static BigDecimal parseSuperRate(final String... args) {
         final String rate = args[PayslipRequestParser.SUPER_RATE_I];
         if (rate.length() < 2) {
-            throw new PayslipException(
-                "super rate must have at least 1 number & end with a %"
-            );
+            throw new PayslipException(PayslipRequestParser.INVALID_SUPER_RATE);
         }
         if (rate.charAt(rate.length() - 1) != '%') {
             throw new PayslipException(
-                "super rate must be suffixed with a % character"
+                PayslipRequestParser.NO_PERCENTAGE_SUFFIX
             );
         }
         final String digits = rate.substring(0, rate.length() - 1);
