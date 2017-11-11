@@ -29,6 +29,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
@@ -87,8 +93,8 @@
                 <configuration>
                     <license>file:${basedir}/src/main/resources/LICENSE.txt</license>
                     <excludes>
-                        <exclude>checkstyle:/src/test/.*</exclude>
-                        <exclude>pmd:/src/test/.*</exclude>
+                        <exclude>checkstyle:src/test/java/com/github/dvdkruk/payslip/model/.*</exclude>
+                        <exclude>pmd:src/test/java/com/github/dvdkruk/payslip/model/.*</exclude>
                     </excludes>
                 </configuration>
                 <executions>

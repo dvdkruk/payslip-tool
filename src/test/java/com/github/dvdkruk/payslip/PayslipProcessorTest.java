@@ -1,3 +1,6 @@
+/**
+ * Copyright (c) 2017, Damiaan van der Kruk.
+ */
 package com.github.dvdkruk.payslip;
 
 import com.github.dvdkruk.payslip.model.Employee;
@@ -5,38 +8,53 @@ import com.github.dvdkruk.payslip.model.PayslipException;
 import com.github.dvdkruk.payslip.model.PayslipRequest;
 import com.github.dvdkruk.payslip.model.PayslipRequestParser;
 import com.github.dvdkruk.payslip.model.PayslipResult;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.junit.rules.ExpectedException;
-
 import java.math.BigDecimal;
 import java.time.Month;
+import org.junit.Assert;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
+/**
+ * Unit tests for the {@link PayslipProcessor} class.
+ * @author Damiaan Van Der Kruk (Damiaan.van.der.Kruk@gmail.com)
+ * @version $Id$
+ * @since 1.0
+ */
 public class PayslipProcessorTest {
 
+    /**
+     * A valid forename.
+     */
     private static final String FORENAME = "Michael";
 
+    /**
+     * A valid surname.
+     */
     private static final String SURNAME = "Jackson";
 
+    /**
+     * A valid {@link Employee} object.
+     */
     private static final Employee EMPLOYEE = new Employee(
         PayslipProcessorTest.FORENAME,
         PayslipProcessorTest.SURNAME,
         BigDecimal.TEN
     );
 
-    @Rule
-    public final ExpectedException thrown = ExpectedException.none();
+    /**
+     * A default {@link PayslipProcessor} object.
+     */
+    private static final PayslipProcessor PROCESSOR = new PayslipProcessor();
 
-    private final PayslipProcessor processor = new PayslipProcessor();
-
+    /**
+     * Checks that a {@link PayslipException} with message {@link
+     * PayslipProcessor#INVALID_FORENAME} is thrown for invalid forenames.
+     *
+     * @param forename An invalid forename.
+     */
     @ParameterizedTest
-    @ValueSource( strings = {"", " "})
+    @ValueSource(strings = {"", " "})
     public final void invalidForenameTest(final String forename) {
         this.checkPayslipExceptionMessage(
             PayslipProcessor.INVALID_FORENAME,
@@ -44,8 +62,14 @@ public class PayslipProcessorTest {
         );
     }
 
+    /**
+     * Checks that a {@link PayslipException} with message {@link
+     * PayslipProcessor#INVALID_SURNAME} is thrown for invalid surnames.
+     *
+     * @param surname An invalid surname.
+     */
     @ParameterizedTest
-    @ValueSource( strings = {"", " "})
+    @ValueSource(strings = {"", " "})
     public final void invalidSurnameTest(final String surname) {
         this.checkPayslipExceptionMessage(
             PayslipProcessor.INVALID_SURNAME,
@@ -53,8 +77,14 @@ public class PayslipProcessorTest {
         );
     }
 
+    /**
+     * Checks that a {@link PayslipException} with message {@link
+     * PayslipProcessor#INVALID_SALARY} is thrown for invalid salaries.
+     *
+     * @param salary An invalid salary.
+     */
     @ParameterizedTest
-    @ValueSource( strings = {"-1", "0"})
+    @ValueSource(strings = {"-1", "0"})
     public final void invalidSalaryTest(final String salary) {
         this.checkPayslipExceptionMessage(
             PayslipProcessor.INVALID_SALARY,
@@ -66,10 +96,17 @@ public class PayslipProcessorTest {
         );
     }
 
+    /**
+     * Checks that a {@link PayslipException} with message {@link
+     * PayslipProcessor#INVALID_SUPER_RATE} is thrown for invalid superannuation
+     * rates.
+     *
+     * @param rate An invalid superannuation rate.
+     */
     @ParameterizedTest
-    @ValueSource( strings = {"-1", "50.1"})
+    @ValueSource(strings = {"-1", "50.1"})
     public final void invalidSuperRateTest(final String rate) {
-        checkPayslipExceptionMessage(
+        this.checkPayslipExceptionMessage(
             PayslipProcessor.INVALID_SUPER_RATE,
             new PayslipRequest(
                 PayslipProcessorTest.EMPLOYEE,
@@ -79,81 +116,33 @@ public class PayslipProcessorTest {
         );
     }
 
+    /**
+     * Checks if {@code input} is processed by into {@code output}. Values are
+     * provided by {@code PayslipProcessorExamples.csv} file.
+     *
+     * @param input String that needs to be processed.
+     * @param output Expected output.
+     */
     @ParameterizedTest
-    @CsvSource({
-        "'David,Rudd,60050,9%,March','David Rudd,March,5004,922,4082,450'",
-    })
+    @CsvFileSource(resources = "PayslipProcessorExamples.csv")
     public final void validateRequest(final String input, final String output) {
         final PayslipRequest request = new PayslipRequestParser(input)
             .toPayslipRequest();
-        final PayslipResult result = this.processor.process(request);
-        assertEquals(output, result.toString());
+        final PayslipResult result = PayslipProcessorTest.PROCESSOR
+            .process(request);
+        Assert.assertEquals(output, result.toString());
     }
 
-    @Test
-    public final void validateRequest() throws Exception {
-        final PayslipRequest request = new PayslipRequest(
-            new Employee("Michael", "Jackson", BigDecimal.ONE),
-            new BigDecimal("50"),
-            Month.DECEMBER
-        );
-        final PayslipResult result = this.processor.process(request);
-        assertEquals("Michael Jackson", result.getName());
-        assertEquals(Month.DECEMBER, result.getMonth());
-    }
-
-    @Test
-    public final void processExample0() throws Exception {
-        final PayslipRequest request = new PayslipRequestParser(
-            "David,Rudd,60050,9%,March"
-        ).toPayslipRequest();
-        final PayslipResult result = this.processor.process(request);
-        assertEquals("David Rudd", result.getName());
-        assertEquals(Month.MARCH, result.getMonth());
-        assertEquals(5004, result.getSalary());
-        assertEquals(922, result.getTax());
-        assertEquals(4082, result.getNetIncome());
-        assertEquals(450, result.getSuperannuation());
-    }
-
-    @Test
-    public final void processExample1() throws Exception {
-        final PayslipRequest request = new PayslipRequestParser(
-            "Ryan,Chen,120000,10%,March"
-        ).toPayslipRequest();
-        final PayslipResult result = this.processor.process(request);
-        assertEquals("Ryan Chen", result.getName());
-        assertEquals(Month.MARCH, result.getMonth());
-        assertEquals(10000, result.getSalary());
-        assertEquals(2696, result.getTax());
-        assertEquals(7304, result.getNetIncome());
-        assertEquals(1000, result.getSuperannuation());
-    }
-
-    @Test
-    public final void nonTaxableSalary() {
-        final PayslipRequest request = new PayslipRequestParser(
-            "Ryan,Chen,18200,1%,March"
-        ).toPayslipRequest();
-        final PayslipResult result = this.processor.process(request);
-        assertEquals(1517, result.getSalary());
-        assertEquals(0, result.getTax());
-        assertEquals(1517, result.getNetIncome());
-        assertEquals(15, result.getSuperannuation());
-    }
-
-    @Test
-    public final void highestTaxableSalary() {
-        final PayslipRequest request = new PayslipRequestParser(
-            "Ryan,Chen,180001,50%,March"
-        ).toPayslipRequest();
-        final PayslipResult result = this.processor.process(request);
-        assertEquals(15000, result.getSalary());
-        assertEquals(4546, result.getTax());
-        assertEquals(10454, result.getNetIncome());
-        assertEquals(7500, result.getSuperannuation());
-    }
-
+    /**
+     * Creates a {@link PayslipRequest} with the given {@code employee} and
+     * tries to processes it and check if a {@link PayslipException} is thrown
+     * with the {@code expected} message.
+     *
+     * @param expected Message that should be of the thrown
+     *  {@link PayslipException}.
+     * @param employee The {@link Employee} object used in the
+     *  {@link PayslipRequest}.
+     */
     private void checkPayslipExceptionMessage(
         final String expected,
         final Employee employee) {
@@ -162,20 +151,27 @@ public class PayslipProcessorTest {
             BigDecimal.TEN,
             Month.JANUARY
         );
-        checkPayslipExceptionMessage(expected, request);
+        this.checkPayslipExceptionMessage(expected, request);
     }
 
+    /**
+     * Tries to processes the given {@code request} and checks if a {@link
+     * PayslipException} is thrown with the {@code expected} message.
+     *
+     * @param expected Message expected by the thrown {@link PayslipException}.
+     * @param request The request that needs to processed.
+     */
     private void checkPayslipExceptionMessage(
         final String expected,
         final PayslipRequest request) {
         PayslipException exception = null;
         try {
-            this.processor.process(request);
+            PayslipProcessorTest.PROCESSOR.process(request);
         } catch (final PayslipException psx) {
             exception = psx;
         }
-        assertNotNull(exception);
-        assertEquals(expected, exception.getMessage());
+        Assert.assertNotNull(exception);
+        Assert.assertEquals(expected, exception.getMessage());
     }
 
 }

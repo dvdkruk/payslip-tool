@@ -41,6 +41,12 @@ public class PayslipProcessor {
      * Scale for calculations.
      */
     private static final int SCALE = 99;
+    public static final String REQUEST_NULL = "Request is null";
+    public static final String INVALID_FORENAME = "First name is null or empty";
+    public static final String INVALID_SURNAME = "Last name is null or empty";
+    public static final String INVALID_SALARY = "Salary must be bigger than zero";
+    public static final String SUPER_RATE_NULL = "Super rate is null";
+    public static final String INVALID_SUPER_RATE = "Super rate must be between 0% - 50%";
 
     /**
      * List containing all the income tax rules for the calculation.
@@ -95,24 +101,24 @@ public class PayslipProcessor {
      */
     private static void validate(final PayslipRequest request) {
         if (request == null) {
-            throw new PayslipException("Request is null");
+            throw new PayslipException(REQUEST_NULL);
         }
         if (isNullOrEmpty(request.getForename())) {
-            throw new PayslipException("First name is null or empty");
+            throw new PayslipException(INVALID_FORENAME);
         }
         if (isNullOrEmpty(request.getSurname())) {
-            throw new PayslipException("Last name is null or empty");
+            throw new PayslipException(INVALID_SURNAME);
         }
         if (request.getAnnualSalary().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new PayslipException("Salary must be bigger than zero");
+            throw new PayslipException(INVALID_SALARY);
         }
         if (request.getSuperRate() == null) {
-            throw new PayslipException("Super rate is null");
+            throw new PayslipException(SUPER_RATE_NULL);
         }
         final BigDecimal rate = request.getSuperRate();
         final BigDecimal min = BigDecimal.ZERO;
         if (isBetween(rate, min)) {
-            throw new PayslipException("Super rate must be between 0% - 50%");
+            throw new PayslipException(INVALID_SUPER_RATE);
         }
     }
 
@@ -137,7 +143,7 @@ public class PayslipProcessor {
      * @return True when string is null or empty, else false is returned.
      */
     private static boolean isNullOrEmpty(final String string) {
-        return string == null || string.isEmpty();
+        return string == null || string.trim().isEmpty();
     }
 
     /**
