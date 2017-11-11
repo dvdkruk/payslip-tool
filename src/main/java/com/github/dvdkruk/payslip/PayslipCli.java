@@ -1,9 +1,8 @@
 /**
  * Copyright (c) 2017, Damiaan van der Kruk.
  */
-package com.github.dvdkruk.payslip.cli;
+package com.github.dvdkruk.payslip;
 
-import com.github.dvdkruk.payslip.PayslipProcessor;
 import com.github.dvdkruk.payslip.model.PayslipException;
 import com.github.dvdkruk.payslip.model.PayslipRequest;
 import com.github.dvdkruk.payslip.model.PayslipRequestParser;

@@ -36,7 +36,7 @@ public class TaxRule {
      * @param base Base tax up to this rule.
      * @param tax Tax rule percentage.
      */
-    TaxRule(final int max, final int base, final BigDecimal tax) {
+    public TaxRule(final int max, final int base, final BigDecimal tax) {
         this.max = max;
         this.base = base;
         this.tax = tax;

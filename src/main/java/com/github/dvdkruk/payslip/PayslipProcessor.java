@@ -8,10 +8,11 @@ import com.github.dvdkruk.payslip.model.PayslipException;
 import com.github.dvdkruk.payslip.model.PayslipRequest;
 import com.github.dvdkruk.payslip.model.PayslipResult;
 import com.github.dvdkruk.payslip.model.TaxRule;
-import com.github.dvdkruk.payslip.model.TaxRuleHelper;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Month;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -23,7 +24,7 @@ import java.util.NoSuchElementException;
  * @version $Id$
  * @since 1.0
  */
-public class PayslipProcessor {
+public final class PayslipProcessor {
     /**
      * Exception message for null request.
      */
@@ -50,6 +51,19 @@ public class PayslipProcessor {
      */
     public static final String INVAL_SUPER_RATE =
         "Super rate must be between 0% - 50%";
+    /**
+     * Default Australia tax rule set, year 2017.
+     */
+    public static final List<TaxRule> DEFAULT_RULES =
+        Collections.unmodifiableList(
+            Arrays.asList(
+                new TaxRule(18200, 0, BigDecimal.ZERO),
+                new TaxRule(37000, 0, new BigDecimal("0.190")),
+                new TaxRule(80000, 3572, new BigDecimal("0.325")),
+                new TaxRule(180000, 17547, new BigDecimal("0.37")),
+                new TaxRule(Integer.MAX_VALUE, 54547, new BigDecimal("0.45"))
+            )
+        );
 
     /**
      * Amount of months.
@@ -71,16 +85,24 @@ public class PayslipProcessor {
     /**
      * List containing all the income tax rules for the calculation.
      */
-    private final List<TaxRule> rules = TaxRuleHelper.DEFAULT_RULES;
+    private final List<TaxRule> rules;
 
     /**
-     * Processes the request argument as a payslip result.
+     * Create a {@link PayslipProcessor} with the {@link
+     *  PayslipProcessor#DEFAULT_RULES}.
+     */
+    public PayslipProcessor() {
+        this.rules = PayslipProcessor.DEFAULT_RULES;
+    }
+
+    /**
+     * Processes the request into a {@link PayslipResult}.
      *
      * @param request A payslip request.
      * @return The result of the request argument.
      * @throws PayslipException If the request is not valid.
      */
-    public final PayslipResult process(final PayslipRequest request) {
+    public PayslipResult process(final PayslipRequest request) {
         validate(request);
         final String name = request.getFullName();
         final Month month = request.getMonth();
@@ -115,9 +137,9 @@ public class PayslipProcessor {
     }
 
     /**
-     * Validates the given request.
+     * Validates {@code request}.
      *
-     * @param request The request to validate.
+     * @param request Valid this request.
      */
     private static void validate(final PayslipRequest request) {
         if (request == null) {
@@ -136,8 +158,7 @@ public class PayslipProcessor {
             throw new PayslipException(PayslipProcessor.SUPER_RATE_NULL);
         }
         final BigDecimal rate = request.getSuperRate();
-        final BigDecimal min = BigDecimal.ZERO;
-        if (isBetween(rate, min)) {
+        if (isBetween(rate, BigDecimal.ZERO, PayslipProcessor.MAX_SUPER_RATE)) {
             throw new PayslipException(PayslipProcessor.INVAL_SUPER_RATE);
         }
     }
@@ -146,14 +167,15 @@ public class PayslipProcessor {
      * Checks if rate is between the given min and max.
      *
      * @param rate The rate to check.
-     * @param min Minimal value for the check.
+     * @param min Lower bound limit.
+     * @param max Upper bound limit.
      * @return True when rate is between min and max, else false is returned.
      */
     private static boolean isBetween(
         final BigDecimal rate,
-        final BigDecimal min) {
-        return rate.compareTo(min) < 0
-            || rate.compareTo(PayslipProcessor.MAX_SUPER_RATE) > 0;
+        final BigDecimal min,
+        final BigDecimal max) {
+        return rate.compareTo(min) < 0 || rate.compareTo(max) > 0;
     }
 
     /**

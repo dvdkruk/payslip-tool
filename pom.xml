@@ -87,7 +87,7 @@
                         <index>true</index>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.github.dvdkruk.payslip.cli.PayslipCli</mainClass>
+                            <mainClass>com.github.dvdkruk.payslip.PayslipCli</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
