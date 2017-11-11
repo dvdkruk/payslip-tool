@@ -7,8 +7,6 @@ import com.github.dvdkruk.payslip.TestAssert;
 import java.math.BigDecimal;
 import java.time.Month;
 import org.junit.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Unit test for {@link PayslipRequest}.
@@ -145,71 +143,6 @@ public class PayslipRequestTest {
             new TestAssert<>(PayslipRequestTest.GEORGE_REQ);
         wrapper.equalTo(PayslipRequestTest.SAME_GEORGE_REQ);
         wrapper.notEqualTo(PayslipRequestTest.LEONARDO_REQ);
-    }
-
-    /**
-     * Parses the {@link PayslipRequestTest#GEORGE} request line and checks if
-     * all getters return the right values.
-     */
-    @Test
-    public final void parseTest() {
-        final PayslipRequest request =
-            new PayslipRequestParser(PayslipRequestTest.GEORGE_LINE)
-            .toPayslipRequest();
-        new TestAssert<>(request.getForename())
-            .isSame(PayslipRequestTest.GEORGE);
-        new TestAssert<>(request.getSurname())
-            .isSame(PayslipRequestTest.SURNAME);
-        new TestAssert<>(request.getAnnualSalary()).isSame(BigDecimal.TEN);
-        new TestAssert<>(request.getSuperRate()).isSame(BigDecimal.ONE);
-        new TestAssert<>(request.getMonth()).isSame(Month.JANUARY);
-    }
-
-    /**
-     * Tests if a {@link PayslipException} with {@link
-     * PayslipRequestParser#INVAL_MONTH} message is thrown when
-     * parsing an invalid month.
-     */
-    @Test
-    public final void parseInvalidMonth() {
-        checkPayslipException(
-            "Peter is an invalid month",
-            "Jennifer,Lawrence,1337,10.1%,Peter"
-        );
-    }
-
-    /**
-     * Tests if a {@link PayslipException} with {@link
-     * PayslipRequestParser#INVAL_ELMNT_AMNT} message is thrown when
-     * parsing lines with invalid elements or amounts of elements.
-     *
-     * @param line A line with invalid elements or amounts of elements.
-     */
-    @ParameterizedTest
-    @ValueSource(strings = {" , , , , ", "Jennifer,Lawrence,1337,10.1%"})
-    public final void parseInvalidArgumentAmount(final String line) {
-        final String msg = PayslipRequestParser.INVAL_ELMNT_AMNT;
-        checkPayslipException(msg, line);
-    }
-
-    /**
-     * Tries to parsing the given {@code line} and checks if a {@link
-     * PayslipException} is thrown with the {@code expected} message.
-     *
-     * @param expected The message of the thrown {@link PayslipException}.
-     * @param line The line that needs to be parsed.
-     */
-    private static void checkPayslipException(
-        final String expected,
-        final String line) {
-        PayslipException exception = null;
-        try {
-            new PayslipRequestParser(line).toPayslipRequest();
-        } catch (final PayslipException pex) {
-            exception = pex;
-        }
-        assert exception != null;
-        new TestAssert<>(exception.getMessage()).equalTo(expected);
     }
 
     /**
