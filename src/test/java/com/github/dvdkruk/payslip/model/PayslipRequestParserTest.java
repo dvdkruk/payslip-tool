@@ -39,7 +39,7 @@ public final class PayslipRequestParserTest {
      */
     @Test
     public void parseForename() {
-        new TestAssert<>(parse().getForename())
+        new TestAssert<>(parse().getEmployee().getForename())
             .isSame(PayslipRequestParserTest.FORENAME);
     }
 
@@ -48,7 +48,7 @@ public final class PayslipRequestParserTest {
      */
     @Test
     public void parseSurname() {
-        new TestAssert<>(parse().getSurname())
+        new TestAssert<>(parse().getEmployee().getSurname())
             .isSame(PayslipRequestParserTest.SURNAME);
     }
 
@@ -57,7 +57,8 @@ public final class PayslipRequestParserTest {
      */
     @Test
     public void parseAnnualSalary() {
-        new TestAssert<>(parse().getAnnualSalary()).isSame(BigDecimal.TEN);
+        new TestAssert<>(parse().getEmployee().getAnnualSalary())
+            .isSame(BigDecimal.TEN);
     }
 
     /**

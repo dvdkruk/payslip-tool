@@ -3,6 +3,7 @@
  */
 package com.github.dvdkruk.payslip;
 
+import com.github.dvdkruk.payslip.model.Employee;
 import com.github.dvdkruk.payslip.model.FinancialInformation;
 import com.github.dvdkruk.payslip.model.PayslipException;
 import com.github.dvdkruk.payslip.model.PayslipRequest;
@@ -104,7 +105,7 @@ public final class PayslipProcessor {
      */
     public PayslipResult process(final PayslipRequest request) {
         validate(request);
-        final String name = request.getFullName();
+        final String name = request.getEmployee().getFullName();
         final Month month = request.getMonth();
         return new PayslipResult(name, month, this.calculate(request));
     }
@@ -116,9 +117,10 @@ public final class PayslipProcessor {
      * @return Monthly financial information.
      */
     private FinancialInformation calculate(final PayslipRequest request) {
-        final int income = calculateIncome(request.getAnnualSalary());
+        final Employee employee = request.getEmployee();
+        final int income = calculateIncome(employee.getAnnualSalary());
         final int tax = this.calculateTax(
-            request.getAnnualSalary().intValueExact()
+            employee.getAnnualSalary().intValueExact()
         );
         final int superann = calculateSuper(income, request.getSuperRate());
         return new FinancialInformation(income, tax, superann);
@@ -142,24 +144,33 @@ public final class PayslipProcessor {
      * @param request Valid this request.
      */
     private static void validate(final PayslipRequest request) {
-        if (request == null) {
+        if (request == null || request.getEmployee() == null) {
             throw new PayslipException(PayslipProcessor.REQUEST_NULL);
         }
-        if (isNullOrEmpty(request.getForename())) {
-            throw new PayslipException(PayslipProcessor.INVAL_FORENAME);
-        }
-        if (isNullOrEmpty(request.getSurname())) {
-            throw new PayslipException(PayslipProcessor.INVAL_SURNAME);
-        }
-        if (request.getAnnualSalary().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new PayslipException(PayslipProcessor.INVAL_SALARY);
-        }
+        validate(request.getEmployee());
         if (request.getSuperRate() == null) {
             throw new PayslipException(PayslipProcessor.SUPER_RATE_NULL);
         }
         final BigDecimal rate = request.getSuperRate();
         if (isBetween(rate, BigDecimal.ZERO, PayslipProcessor.MAX_SUPER_RATE)) {
             throw new PayslipException(PayslipProcessor.INVAL_SUPER_RATE);
+        }
+    }
+
+    /**
+     * Validates {@code employee}.
+     *
+     * @param employee Valid this employee.
+     */
+    private static void validate(final Employee employee) {
+        if (isNullOrEmpty(employee.getForename())) {
+            throw new PayslipException(PayslipProcessor.INVAL_FORENAME);
+        }
+        if (isNullOrEmpty(employee.getSurname())) {
+            throw new PayslipException(PayslipProcessor.INVAL_SURNAME);
+        }
+        if (employee.getAnnualSalary().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new PayslipException(PayslipProcessor.INVAL_SALARY);
         }
     }
 

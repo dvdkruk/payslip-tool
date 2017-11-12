@@ -51,39 +51,12 @@ public final class PayslipRequest {
     }
 
     /**
-     * Employee's full name, concatenation of forename and surname.
+     * Get employee of this request.
      *
-     * @return Employee's full name.
+     * @return A {@link Employee}.
      */
-    public String getFullName() {
-        return this.employee.getFullName();
-    }
-
-    /**
-     * Employee's forename.
-     *
-     * @return Employee's forename.
-     */
-    public String getForename() {
-        return this.employee.getForename();
-    }
-
-    /**
-     * Employee's surname.
-     *
-     * @return Employee's surname.
-     */
-    public String getSurname() {
-        return this.employee.getSurname();
-    }
-
-    /**
-     * Annual salary.
-     *
-     * @return Annual salary.
-     */
-    public BigDecimal getAnnualSalary() {
-        return this.employee.getAnnualSalary();
+    public Employee getEmployee() {
+        return this.employee;
     }
 
     /**
@@ -141,7 +114,7 @@ public final class PayslipRequest {
      * @return Display annual salary without decimals/cents.
      */
     private String getDisplaySalary() {
-        return createDecimalFormat(0).format(this.getAnnualSalary());
+        return createDecimalFormat(0).format(this.employee.getAnnualSalary());
     }
 
     /**
@@ -168,8 +141,8 @@ public final class PayslipRequest {
      * @param builder A {@link CommaSeparatedStringBuilder}.
      */
     private void appendEmployee(final CommaSeparatedStringBuilder builder) {
-        builder.append(this.getForename());
-        builder.append(this.getSurname());
+        builder.append(this.employee.getForename());
+        builder.append(this.employee.getSurname());
         builder.append(this.getDisplaySalary());
     }
 

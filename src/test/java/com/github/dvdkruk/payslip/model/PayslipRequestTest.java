@@ -77,38 +77,38 @@ public class PayslipRequestTest {
     }
 
     /**
-     * Test for {@link PayslipRequest#getAnnualSalary()}.
+     * Test for {@link Employee#getAnnualSalary()}.
      */
     @Test
     public final void getAnnualSalary() {
-        new TestAssert<>(LEONARDO_REQ.getAnnualSalary())
+        new TestAssert<>(LEONARDO_REQ.getEmployee().getAnnualSalary())
             .equalTo(BigDecimal.TEN);
     }
 
     /**
-     * Test for {@link PayslipRequest#getFullName()}.
+     * Test for {@link Employee#getFullName()}.
      */
     @Test
     public final void getFullName() {
-        new TestAssert<>(LEONARDO_REQ.getFullName())
+        new TestAssert<>(LEONARDO_REQ.getEmployee().getFullName())
             .equalTo(PayslipRequestTest.FULL_NAME);
     }
 
     /**
-     * Test for {@link PayslipRequest#getSurname()}.
+     * Test for {@link Employee#getSurname()}.
      */
     @Test
     public final void getSurname() {
-        new TestAssert<>(LEONARDO_REQ.getSurname())
+        new TestAssert<>(LEONARDO_REQ.getEmployee().getSurname())
             .equalTo(PayslipRequestTest.SURNAME);
     }
 
     /**
-     * Test for {@link PayslipRequest#getForename()}.
+     * Test for {@link Employee#getForename()}.
      */
     @Test
     public final void getForename() {
-        new TestAssert<>(LEONARDO_REQ.getForename())
+        new TestAssert<>(LEONARDO_REQ.getEmployee().getForename())
             .equalTo(PayslipRequestTest.LEONARDO);
     }
 
