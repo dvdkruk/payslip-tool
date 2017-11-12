@@ -1,167 +1,165 @@
+/**
+ * Copyright (c) 2017, Damiaan van der Kruk.
+ */
 package com.github.dvdkruk.payslip.model;
 
-
+import com.github.dvdkruk.payslip.CommaSeparatedStringBuilder;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.Month;
 import java.time.format.TextStyle;
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
 
 /**
  * Represent a payslip request.
+ *
+ * @author Damiaan Van Der Kruk (Damiaan.van.der.Kruk@gmail.com)
+ * @version $Id$
+ * @since 1.0
  */
-public class PayslipRequest {
+public final class PayslipRequest {
 
-    private static final String SEPARATOR = ",";
-
-    private static final DecimalFormat TWO_DECIMAL_FORMATTER = new DecimalFormat();
-
-    private static final DecimalFormat INTEGER_FORMATTER = new DecimalFormat();
-
-    static {
-        TWO_DECIMAL_FORMATTER.setMaximumFractionDigits(2);
-        TWO_DECIMAL_FORMATTER.setMinimumFractionDigits(0);
-        TWO_DECIMAL_FORMATTER.setRoundingMode(RoundingMode.HALF_UP);
-        TWO_DECIMAL_FORMATTER.setGroupingUsed(false);
-
-        INTEGER_FORMATTER.setMinimumFractionDigits(0);
-        INTEGER_FORMATTER.setMaximumFractionDigits(0);
-        INTEGER_FORMATTER.setRoundingMode(RoundingMode.HALF_UP);
-        INTEGER_FORMATTER.setGroupingUsed(false);
-    }
-
-    private final String firstName;
-
-    private final String lastName;
-
-    private final BigDecimal annualSalary;
-
-    private final BigDecimal superRate;
-
+    /**
+     * Employee.
+     */
+    private final Employee employee;
+    /**
+     * Superannuation rate.
+     */
+    private final BigDecimal rate;
+    /**
+     * Calculate payslip for this month.
+     */
     private final Month month;
 
-    private final String string;
-
-    public PayslipRequest(String firstName, String lastName, BigDecimal annualSalary, BigDecimal superRate, Month month) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.annualSalary = annualSalary;
-        this.superRate = superRate;
+    /**
+     * Payslip request constructor.
+     *
+     * @param employee Employee.
+     * @param rate Superannuation rate.
+     * @param month Payslip month.
+     */
+    public PayslipRequest(
+        final Employee employee,
+        final BigDecimal rate,
+        final Month month) {
+        this.employee = employee;
+        this.rate = rate;
         this.month = month;
-
-        this.string = firstName +
-                SEPARATOR + lastName +
-                SEPARATOR + INTEGER_FORMATTER.format(annualSalary) +
-                SEPARATOR + TWO_DECIMAL_FORMATTER.format(superRate) + "%" +
-                SEPARATOR + month.getDisplayName(TextStyle.FULL, Locale.ENGLISH);
     }
 
     /**
-     * Parses the string argument as a payslip request. A parsable string should have the following format:
-     * &lt;first_name&gt;,&lt;last_name&gt;,&lt;annual_salary&gt;,&lt;super_rate&gt;$,&lt;month&gt;,</>
+     * Get employee of this request.
      *
-     * @param arg a parsable {@code String}
-     * @return the payslip request representing by the string argument.
-     * @throws PayslipException if the string does not contain a parsable payslip request.
+     * @return A {@link Employee}.
      */
-    public static PayslipRequest parse(String arg) {
-        if (arg == null) {
-            throw new PayslipException("null");
-        }
-        String[] args = Arrays.stream(arg.split(SEPARATOR))
-                .map(String::trim)
-                .filter(e -> !e.isEmpty())
-                .toArray(String[]::new);
-
-        if (args.length != 5) {
-            throw new PayslipException("a payslip request must consist of 5 (non empty) elements");
-        }
-        return parse(args);
+    public Employee getEmployee() {
+        return this.employee;
     }
 
-    private static PayslipRequest parse(String[] args) {
-        String firstName = args[0];
-        String lastName = args[1];
-        BigDecimal annualSalary = parseToBigDecimal(args[2], "annual salary");
-        if (args[3].length() < 2) {
-            throw new PayslipException("super rate must consist of at least one number and a '%' (percent character)");
-        }
-        if (args[3].charAt(args[3].length() - 1) != '%') {
-            throw new PayslipException("super rate must be suffixed with a '%' (percent character)");
-        }
-        String superRateArg = args[3].substring(0, args[3].length() - 1);
-        BigDecimal superRate = parseToBigDecimal(superRateArg, "super rate");
-
-        Month month;
-        try {
-            month = Month.valueOf(args[4].toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new PayslipException(args[4] + " is an invalid month", e);
-        }
-        return new PayslipRequest(firstName, lastName, annualSalary, superRate, month);
+    /**
+     * Superannuation rate.
+     *
+     * @return Superannuation rate.
+     */
+    public BigDecimal getSuperRate() {
+        return this.rate;
     }
 
-    private static BigDecimal parseToBigDecimal(String arg, String fieldName) {
-        try {
-            return new BigDecimal(arg);
-        } catch (NumberFormatException e) {
-            throw new PayslipException("cannot parse " + fieldName + " '" + arg + "' into a number", e);
-        }
+    /**
+     * Month.
+     *
+     * @return Month.
+     */
+    public Month getMonth() {
+        return this.month;
     }
 
     @Override
     public String toString() {
-        return string;
+        final CommaSeparatedStringBuilder builder =
+            new CommaSeparatedStringBuilder();
+        this.appendEmployee(builder);
+        builder.append(this.getDisplaySuperRate());
+        builder.append(this.getDisplayMonthName());
+        return builder.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        final boolean equals;
+        if (this == obj) {
+            equals = true;
+        } else if (obj == null || getClass() != obj.getClass()) {
+            equals = false;
+        } else {
+            final PayslipRequest that = (PayslipRequest) obj;
+            equals = Objects.equals(this.employee, that.employee)
+                && Objects.equals(this.rate, that.rate)
+                && this.month == that.month;
+        }
+        return equals;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, annualSalary, superRate, month);
+        return Objects.hash(this.employee, this.rate, this.month);
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj instanceof PayslipRequest) {
-            PayslipRequest request = (PayslipRequest) obj;
-            return firstName.equals(request.firstName)
-                    && lastName.equals(request.lastName)
-                    && annualSalary.equals(request.annualSalary)
-                    && superRate.equals(request.getSuperRate())
-                    && month.equals(request.month);
-        }
-        return false;
+    /**
+     * Display annual salary without decimals/cents.
+     *
+     * @return Display annual salary without decimals/cents.
+     */
+    private String getDisplaySalary() {
+        return createDecimalFormat(0).format(this.employee.getAnnualSalary());
     }
 
-    public String getFullName() {
-        return firstName + " " + lastName;
+    /**
+     * Display superannuation with two decimals and % character.
+     *
+     * @return Display superannuation with two decimals and % character.
+     */
+    private String getDisplaySuperRate() {
+        return String.format("%s%%", createDecimalFormat(2).format(this.rate));
     }
 
-    public String getFirstName() {
-        return firstName;
+    /**
+     * Full display month name in English.
+     *
+     * @return Full display month name in English.
+     */
+    private String getDisplayMonthName() {
+        return this.month.getDisplayName(TextStyle.FULL, Locale.ENGLISH);
     }
 
-    public String getLastName() {
-        return lastName;
+    /**
+     * Adds {@link PayslipRequest#employee} information to {@code builder}.
+     *
+     * @param builder A {@link CommaSeparatedStringBuilder}.
+     */
+    private void appendEmployee(final CommaSeparatedStringBuilder builder) {
+        builder.append(this.employee.getForename());
+        builder.append(this.employee.getSurname());
+        builder.append(this.getDisplaySalary());
     }
 
-    public BigDecimal getAnnualSalary() {
-        return annualSalary;
+    /**
+     * A {@link DecimalFormat} with {@code max} set as maximum fraction digits
+     * amount.
+     *
+     * @param max Maximum fraction digits amount.
+     * @return A {@link DecimalFormat}.
+     */
+    private static DecimalFormat createDecimalFormat(final int max) {
+        final DecimalFormat format = new DecimalFormat();
+        format.setMaximumFractionDigits(max);
+        format.setMinimumFractionDigits(0);
+        format.setRoundingMode(RoundingMode.HALF_UP);
+        format.setGroupingUsed(false);
+        return format;
     }
 
-    public BigDecimal getSuperRate() {
-        return superRate;
-    }
-
-    public Month getMonth() {
-        return month;
-    }
 }

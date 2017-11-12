@@ -1,5 +1,9 @@
+/**
+ * Copyright (c) 2017, Damiaan van der Kruk.
+ */
 package com.github.dvdkruk.payslip.model;
 
+import com.github.dvdkruk.payslip.CommaSeparatedStringBuilder;
 import java.time.Month;
 import java.time.Year;
 import java.time.format.TextStyle;
@@ -7,96 +11,165 @@ import java.util.Locale;
 import java.util.Objects;
 
 /**
- * Represent a payslip result - Result of a successfully processed {@code PayslipRequest} instance;
+ * Represent a payslip result - Result of a successfully processed
+ * {@code PayslipRequest} instance.
+ *
+ * @author Damiaan Van Der Kruk (Damiaan.van.der.Kruk@gmail.com)
+ * @version $Id$
+ * @since 1.0
  */
-public class PayslipResult {
+public final class PayslipResult {
 
-    private static final String SEPARATOR = ",";
+    /**
+     * Full name.
+     */
+    private final String name;
 
-    private final String fullName;
-
+    /**
+     * Calculated month.
+     */
     private final Month month;
 
-    private final int grossIncome;
+    /**
+     * Financial information.
+     */
+    private final FinancialInformation financial;
 
-    private final int incomeTax;
-
-    private final int netIncome;
-
-    private final int monthlySuper;
-
-    private final String displayString;
-
-    public PayslipResult(String fullName, Month month, int grossIncome, int incomeTax, int monthlySuper) {
-        this.fullName = fullName;
+    /**
+     * Constructor for payslip result.
+     *
+     * @param name Full name.
+     * @param month Calculation month.
+     * @param financial Calculated financial information.
+     */
+    public PayslipResult(
+        final String name,
+        final Month month,
+        final FinancialInformation financial) {
+        this.name = name;
         this.month = month;
-        this.grossIncome = grossIncome;
-        this.incomeTax = incomeTax;
-        this.netIncome = grossIncome - incomeTax;
-        this.monthlySuper = monthlySuper;
+        this.financial = financial;
+    }
 
-        String monthDisplayName = month.getDisplayName(TextStyle.FULL, Locale.ENGLISH);
-        displayString = fullName +
-                SEPARATOR + "01 " + monthDisplayName +
-                " - " + month.length(Year.now().isLeap()) +
-                " " + monthDisplayName +
-                SEPARATOR + grossIncome +
-                SEPARATOR + incomeTax +
-                SEPARATOR + netIncome +
-                SEPARATOR + monthlySuper;
+    /**
+     * Full name.
+     *
+     * @return Full name.
+     */
+    public String getName() {
+        return this.name;
+    }
+
+    /**
+     * Calculation month.
+     *
+     * @return Calculation month.
+     */
+    public Month getMonth() {
+        return this.month;
+    }
+
+    /**
+     * Monthly salary.
+     *
+     * @return Monthly salary.
+     */
+    public int getSalary() {
+        return this.financial.getSalary();
+    }
+
+    /**
+     * Monthly income tax.
+     *
+     * @return Monthly income tax.
+     */
+    public int getTax() {
+        return this.financial.getTax();
+    }
+
+    /**
+     * Monthly net income.
+     *
+     * @return Monthly net income.
+     */
+    public int getNetIncome() {
+        return this.financial.getNetIncome();
+    }
+
+    /**
+     * Monthly superannuation.
+     *
+     * @return Monthly superannuation.
+     */
+    public int getSuperannuation() {
+        return this.financial.getSuperannuation();
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
+    public boolean equals(final Object obj) {
+        final boolean equals;
+        if (this == obj) {
+            equals = true;
+        } else if (obj == null || this.getClass() != obj.getClass()) {
+            equals = false;
+        } else {
+            final PayslipResult that = (PayslipResult) obj;
+            equals = Objects.equals(this.name, that.name)
+                && Objects.equals(this.financial, that.financial)
+                && this.month == that.month;
         }
-        if (obj == this) {
-            return true;
-        }
-        if (obj instanceof PayslipResult) {
-            PayslipResult result = (PayslipResult) obj;
-            return fullName.equals(result.fullName)
-                    && month.equals(result.month)
-                    && grossIncome == result.grossIncome
-                    && incomeTax == result.incomeTax
-                    && monthlySuper == result.monthlySuper;
-        }
-        return false;
+        return equals;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fullName, month, grossIncome, incomeTax, monthlySuper);
+        return Objects.hash(this.name, this.month, this.financial);
     }
 
     @Override
     public String toString() {
-        return displayString;
+        final CommaSeparatedStringBuilder builder =
+            new CommaSeparatedStringBuilder();
+        builder.append(this.name);
+        builder.append(this.getDisplayMonth());
+        this.appendFinancialInformation(builder);
+        return builder.toString();
     }
 
-    public String getFullName() {
-        return fullName;
+    /**
+     * Adds {@link PayslipResult#financial} information to {@code builder}.
+     *
+     * @param builder A {@link CommaSeparatedStringBuilder}.
+     */
+    private void appendFinancialInformation(
+        final CommaSeparatedStringBuilder builder) {
+        builder.append(this.getSalary());
+        builder.append(this.getTax());
+        builder.append(this.getNetIncome());
+        builder.append(this.getSuperannuation());
     }
 
-    public Month getMonth() {
-        return month;
+    /**
+     * Full month name in English.
+     *
+     * @return Full month name in English.
+     */
+    private String getMonthName() {
+        return this.month.getDisplayName(TextStyle.FULL, Locale.ENGLISH);
     }
 
-    public int getGrossIncome() {
-        return grossIncome;
+    /**
+     * Display string of {@link PayslipResult#month}.
+     *
+     * @return Display string of {@link PayslipResult#month}.
+     */
+    private String getDisplayMonth() {
+        return String.format(
+            "01 %s - %s %1$s",
+            this.getMonthName(),
+            this.month.length(Year.now().isLeap())
+        );
     }
 
-    public int getIncomeTax() {
-        return incomeTax;
-    }
-
-    public int getNetIncome() {
-        return netIncome;
-    }
-
-    public int getMonthlySuper() {
-        return monthlySuper;
-    }
 }
 
