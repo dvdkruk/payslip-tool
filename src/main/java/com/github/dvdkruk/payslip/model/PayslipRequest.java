@@ -19,7 +19,7 @@ import java.util.Objects;
  * @version $Id$
  * @since 1.0
  */
-public class PayslipRequest {
+public final class PayslipRequest {
 
     /**
      * Employee.
@@ -50,24 +50,12 @@ public class PayslipRequest {
         this.month = month;
     }
 
-    @Override
-    public final String toString() {
-        final CommaSeparatedStringBuilder builder =
-            new CommaSeparatedStringBuilder();
-        builder.append(this.getForename());
-        builder.append(this.getSurname());
-        builder.append(this.getDisplaySalary());
-        builder.append(this.getDisplaySuperRate());
-        builder.append(this.getDisplayMonthName());
-        return builder.toString();
-    }
-
     /**
      * Employee's full name, concatenation of forename and surname.
      *
      * @return Employee's full name.
      */
-    public final String getFullName() {
+    public String getFullName() {
         return this.employee.getFullName();
     }
 
@@ -76,7 +64,7 @@ public class PayslipRequest {
      *
      * @return Employee's forename.
      */
-    public final String getForename() {
+    public String getForename() {
         return this.employee.getForename();
     }
 
@@ -85,7 +73,7 @@ public class PayslipRequest {
      *
      * @return Employee's surname.
      */
-    public final String getSurname() {
+    public String getSurname() {
         return this.employee.getSurname();
     }
 
@@ -94,7 +82,7 @@ public class PayslipRequest {
      *
      * @return Annual salary.
      */
-    public final BigDecimal getAnnualSalary() {
+    public BigDecimal getAnnualSalary() {
         return this.employee.getAnnualSalary();
     }
 
@@ -103,7 +91,7 @@ public class PayslipRequest {
      *
      * @return Superannuation rate.
      */
-    public final BigDecimal getSuperRate() {
+    public BigDecimal getSuperRate() {
         return this.rate;
     }
 
@@ -112,12 +100,22 @@ public class PayslipRequest {
      *
      * @return Month.
      */
-    public final Month getMonth() {
+    public Month getMonth() {
         return this.month;
     }
 
     @Override
-    public final boolean equals(final Object obj) {
+    public String toString() {
+        final CommaSeparatedStringBuilder builder =
+            new CommaSeparatedStringBuilder();
+        this.appendEmployee(builder);
+        builder.append(this.getDisplaySuperRate());
+        builder.append(this.getDisplayMonthName());
+        return builder.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
         final boolean equals;
         if (this == obj) {
             equals = true;
@@ -133,7 +131,7 @@ public class PayslipRequest {
     }
 
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         return Objects.hash(this.employee, this.rate, this.month);
     }
 
@@ -165,6 +163,17 @@ public class PayslipRequest {
     }
 
     /**
+     * Adds {@link PayslipRequest#employee} information to {@code builder}.
+     *
+     * @param builder A {@link CommaSeparatedStringBuilder}.
+     */
+    private void appendEmployee(final CommaSeparatedStringBuilder builder) {
+        builder.append(this.getForename());
+        builder.append(this.getSurname());
+        builder.append(this.getDisplaySalary());
+    }
+
+    /**
      * A {@link DecimalFormat} with {@code max} set as maximum fraction digits
      * amount.
      *
@@ -179,4 +188,5 @@ public class PayslipRequest {
         format.setGroupingUsed(false);
         return format;
     }
+
 }

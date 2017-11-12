@@ -3,6 +3,9 @@
  */
 package com.github.dvdkruk.payslip.model;
 
+import com.github.dvdkruk.payslip.CommaSeparatedStringBuilder;
+import java.util.Objects;
+
 /**
  * Contains financial information for a month.
  *
@@ -10,7 +13,7 @@ package com.github.dvdkruk.payslip.model;
  * @version $Id$
  * @since 1.0
  */
-public class FinancialInformation {
+public final class FinancialInformation {
 
     /**
      * Monthly salary.
@@ -48,7 +51,7 @@ public class FinancialInformation {
      *
      * @return Monthly salary.
      */
-    public final int getSalary() {
+    public int getSalary() {
         return this.salary;
     }
 
@@ -57,7 +60,7 @@ public class FinancialInformation {
      *
      * @return Monthly income tax.
      */
-    public final int getTax() {
+    public int getTax() {
         return this.tax;
     }
 
@@ -66,7 +69,7 @@ public class FinancialInformation {
      *
      * @return Monthly net income.
      */
-    public final int getNetIncome() {
+    public int getNetIncome() {
         return this.salary - this.tax;
     }
 
@@ -75,7 +78,37 @@ public class FinancialInformation {
      *
      * @return Monthly superann sum.
      */
-    public final int getSuperannuation() {
+    public int getSuperannuation() {
         return this.superann;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        final boolean equal;
+        if (this == obj) {
+            equal = true;
+        } else if (obj == null || getClass() != obj.getClass()) {
+            equal = false;
+        } else {
+            final FinancialInformation that = (FinancialInformation) obj;
+            equal = this.salary == that.salary
+                && this.tax == that.tax
+                && this.superann == that.superann;
+        }
+        return equal;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.salary, this.tax, this.superann);
+    }
+
+    @Override
+    public String toString() {
+        return new CommaSeparatedStringBuilder()
+            .append(this.salary)
+            .append(this.tax)
+            .append(this.superann)
+            .toString();
     }
 }

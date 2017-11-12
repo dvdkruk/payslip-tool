@@ -18,7 +18,7 @@ import java.util.Objects;
  * @version $Id$
  * @since 1.0
  */
-public class PayslipResult {
+public final class PayslipResult {
 
     /**
      * Full name.
@@ -56,7 +56,7 @@ public class PayslipResult {
      *
      * @return Full name.
      */
-    public final String getName() {
+    public String getName() {
         return this.name;
     }
 
@@ -65,7 +65,7 @@ public class PayslipResult {
      *
      * @return Calculation month.
      */
-    public final Month getMonth() {
+    public Month getMonth() {
         return this.month;
     }
 
@@ -74,7 +74,7 @@ public class PayslipResult {
      *
      * @return Monthly salary.
      */
-    public final int getSalary() {
+    public int getSalary() {
         return this.financial.getSalary();
     }
 
@@ -83,7 +83,7 @@ public class PayslipResult {
      *
      * @return Monthly income tax.
      */
-    public final int getTax() {
+    public int getTax() {
         return this.financial.getTax();
     }
 
@@ -92,7 +92,7 @@ public class PayslipResult {
      *
      * @return Monthly net income.
      */
-    public final int getNetIncome() {
+    public int getNetIncome() {
         return this.financial.getNetIncome();
     }
 
@@ -101,12 +101,12 @@ public class PayslipResult {
      *
      * @return Monthly superannuation.
      */
-    public final int getSuperannuation() {
+    public int getSuperannuation() {
         return this.financial.getSuperannuation();
     }
 
     @Override
-    public final boolean equals(final Object obj) {
+    public boolean equals(final Object obj) {
         final boolean equals;
         if (this == obj) {
             equals = true;
@@ -114,37 +114,39 @@ public class PayslipResult {
             equals = false;
         } else {
             final PayslipResult that = (PayslipResult) obj;
-            equals = this.getSalary() == that.getSalary()
-                && this.getTax() == that.getTax()
-                && this.getSuperannuation() == that.getSuperannuation()
-                && Objects.equals(this.name, that.name)
+            equals = Objects.equals(this.name, that.name)
+                && Objects.equals(this.financial, that.financial)
                 && this.month == that.month;
         }
         return equals;
     }
 
     @Override
-    public final int hashCode() {
-        return Objects.hash(
-            this.name,
-            this.month,
-            this.getSalary(),
-            this.getTax(),
-            this.getSuperannuation()
-        );
+    public int hashCode() {
+        return Objects.hash(this.name, this.month, this.financial);
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         final CommaSeparatedStringBuilder builder =
             new CommaSeparatedStringBuilder();
-        builder.append(this.getName());
+        builder.append(this.name);
         builder.append(this.getDisplayMonth());
+        this.appendFinancialInformation(builder);
+        return builder.toString();
+    }
+
+    /**
+     * Adds {@link PayslipResult#financial} information to {@code builder}.
+     *
+     * @param builder A {@link CommaSeparatedStringBuilder}.
+     */
+    private void appendFinancialInformation(
+        final CommaSeparatedStringBuilder builder) {
         builder.append(this.getSalary());
         builder.append(this.getTax());
         builder.append(this.getNetIncome());
         builder.append(this.getSuperannuation());
-        return builder.toString();
     }
 
     /**
@@ -168,5 +170,6 @@ public class PayslipResult {
             this.month.length(Year.now().isLeap())
         );
     }
+
 }
 

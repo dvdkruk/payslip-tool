@@ -3,6 +3,7 @@
  */
 package com.github.dvdkruk.payslip.model;
 
+import com.github.dvdkruk.payslip.CommaSeparatedStringBuilder;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -13,7 +14,7 @@ import java.util.Objects;
  * @version $Id$
  * @since 1.0
  */
-public class Employee {
+public final class Employee {
 
     /**
      * Employee's forename.
@@ -46,18 +47,56 @@ public class Employee {
         this.salary = salary;
     }
 
+    /**
+     * Employee's forename.
+     *
+     * @return Employee's forename.
+     */
+    public String getForename() {
+        return this.forename;
+    }
+
+    /**
+     * Employee's surname name.
+     *
+     * @return Employee's surname name.
+     */
+    public String getSurname() {
+        return this.surname;
+    }
+
+    /**
+     * Employee's full name.
+     *
+     * @return Employee's full name.
+     */
+    public String getFullName() {
+        return new StringBuilder(this.forename)
+            .append(" ")
+            .append(this.surname)
+            .toString();
+    }
+
+    /**
+     * Annual salary.
+     *
+     * @return Annual salary.
+     */
+    public BigDecimal getAnnualSalary() {
+        return this.salary;
+    }
+
     @Override
-    public final String toString() {
-        return new StringBuilder("Employee{")
-            .append("forename='").append(this.forename).append('\'')
-            .append(", surname='").append(this.surname).append('\'')
-            .append(", salary='").append(this.salary).append('\'')
-            .append('}')
+    public String toString() {
+        return new CommaSeparatedStringBuilder()
+            .append(this.forename)
+            .append(this.surname)
+            .append(this.salary.toString())
             .toString();
     }
 
     @Override
-    public final boolean equals(final Object obj) {
+    public boolean equals(final Object obj) {
         final boolean equals;
         if (this == obj)  {
             equals = true;
@@ -73,46 +112,8 @@ public class Employee {
     }
 
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         return Objects.hash(this.forename, this.surname, this.salary);
     }
 
-    /**
-     * Employee's forename.
-     *
-     * @return Employee's forename.
-     */
-    public final String getForename() {
-        return this.forename;
-    }
-
-    /**
-     * Employee's surname name.
-     *
-     * @return Employee's surname name.
-     */
-    public final String getSurname() {
-        return this.surname;
-    }
-
-    /**
-     * Employee's full name.
-     *
-     * @return Employee's full name.
-     */
-    public final String getFullName() {
-        return new StringBuilder(this.forename)
-            .append(" ")
-            .append(this.surname)
-            .toString();
-    }
-
-    /**
-     * Annual salary.
-     *
-     * @return Annual salary.
-     */
-    public final BigDecimal getAnnualSalary() {
-        return this.salary;
-    }
 }
