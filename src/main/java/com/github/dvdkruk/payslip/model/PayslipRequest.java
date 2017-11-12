@@ -52,13 +52,14 @@ public class PayslipRequest {
 
     @Override
     public final String toString() {
-        return new CommaSeparatedStringBuilder()
-            .append(this.getForename())
-            .append(this.getSurname())
-            .append(this.getDisplaySalary())
-            .append(this.getDisplaySuperRate())
-            .append(this.getDisplayMonthName())
-            .toString();
+        final CommaSeparatedStringBuilder builder =
+            new CommaSeparatedStringBuilder();
+        builder.append(this.getForename());
+        builder.append(this.getSurname());
+        builder.append(this.getDisplaySalary());
+        builder.append(this.getDisplaySuperRate());
+        builder.append(this.getDisplayMonthName());
+        return builder.toString();
     }
 
     /**
@@ -142,7 +143,7 @@ public class PayslipRequest {
      * @return Display annual salary without decimals/cents.
      */
     private String getDisplaySalary() {
-        return getIntegerFormatter().format(this.getAnnualSalary());
+        return createDecimalFormat(0).format(this.getAnnualSalary());
     }
 
     /**
@@ -151,7 +152,7 @@ public class PayslipRequest {
      * @return Display superannuation with two decimals and % character.
      */
     private String getDisplaySuperRate() {
-        return String.format("%s%%", getTwoDecimalFormat().format(this.rate));
+        return String.format("%s%%", createDecimalFormat(2).format(this.rate));
     }
 
     /**
@@ -164,27 +165,15 @@ public class PayslipRequest {
     }
 
     /**
-     * A two decimal formatter.
+     * A {@link DecimalFormat} with {@code max} set as maximum fraction digits
+     * amount.
      *
-     * @return A two decimal formatter.
+     * @param max Maximum fraction digits amount.
+     * @return A {@link DecimalFormat}.
      */
-    private static DecimalFormat getTwoDecimalFormat() {
+    private static DecimalFormat createDecimalFormat(final int max) {
         final DecimalFormat format = new DecimalFormat();
-        format.setMaximumFractionDigits(2);
-        format.setMinimumFractionDigits(0);
-        format.setRoundingMode(RoundingMode.HALF_UP);
-        format.setGroupingUsed(false);
-        return format;
-    }
-
-    /**
-     * A integer/whole number formatter.
-     *
-     * @return A integer/whole number formatter.
-     */
-    private static DecimalFormat getIntegerFormatter() {
-        final DecimalFormat format = new DecimalFormat();
-        format.setMaximumFractionDigits(0);
+        format.setMaximumFractionDigits(max);
         format.setMinimumFractionDigits(0);
         format.setRoundingMode(RoundingMode.HALF_UP);
         format.setGroupingUsed(false);

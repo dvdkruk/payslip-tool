@@ -136,14 +136,15 @@ public class PayslipResult {
 
     @Override
     public final String toString() {
-        return new CommaSeparatedStringBuilder()
-            .append(this.getName())
-            .append(this.getDisplayMonth())
-            .append(this.getSalary())
-            .append(this.getTax())
-            .append(this.getNetIncome())
-            .append(this.getSuperannuation())
-            .toString();
+        final CommaSeparatedStringBuilder builder =
+            new CommaSeparatedStringBuilder();
+        builder.append(this.getName());
+        builder.append(this.getDisplayMonth());
+        builder.append(this.getSalary());
+        builder.append(this.getTax());
+        builder.append(this.getNetIncome());
+        builder.append(this.getSuperannuation());
+        return builder.toString();
     }
 
     /**

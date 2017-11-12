@@ -67,16 +67,28 @@ final class PayslipCli {
     private void runInteractiveMode() {
         this.printInteractiveModeText();
         boolean running = true;
-        do {
-            final String line = this.console.readLine();
-            if (!isNullOrEmpty(line)) {
-                if ("exit".equals(line)) {
-                    running = false;
-                } else {
-                    this.parse(line);
-                }
+        while (running) {
+            running = this.parseLine();
+        }
+    }
+
+    /**
+     * Parses a line from the {@link PayslipCli#console}.
+     *
+     * @return Is {@code false} when exit is parsed, else {@code true} is
+     *  returned.
+     */
+    private boolean parseLine() {
+        final String line = this.console.readLine();
+        boolean proceed = true;
+        if (!isNullOrEmpty(line)) {
+            if ("exit".equals(line)) {
+                proceed = false;
+            } else {
+                this.parse(line);
             }
-        } while (running);
+        }
+        return proceed;
     }
 
     /**
@@ -137,15 +149,25 @@ final class PayslipCli {
             final PayslipResult result = this.processor.process(request);
             this.console.writer().println(result.toString());
         } catch (final PayslipException pex) {
-            final String msg;
-            if (index < 0) {
-                msg = pex.getMessage();
-            } else {
-                msg = String
-                    .format("(argument: %s): %s", index, pex.getMessage());
-            }
+            this.handle(pex, index);
+        }
+    }
+
+    /**
+     * Handles {@code pex} for argument {@code index}.
+     *
+     * @param pex Exception that need to be handled.
+     * @param index Argument index.
+     */
+    private void handle(final PayslipException pex, final int index) {
+        if (index < 0) {
+            final String msg =
+                String.format("error, argument: %s", index);
             this.console.writer().println(msg);
             LOG.log(Level.FINE, msg, pex);
+        } else {
+            this.console.writer().println(pex.getMessage());
+            LOG.log(Level.FINE, "error", pex);
         }
     }
 
