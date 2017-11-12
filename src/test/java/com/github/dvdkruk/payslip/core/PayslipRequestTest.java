@@ -1,9 +1,10 @@
 /**
  * Copyright (c) 2017, Damiaan van der Kruk.
  */
-package com.github.dvdkruk.payslip.model;
 
-import com.github.dvdkruk.payslip.TestAssert;
+package com.github.dvdkruk.payslip.core;
+
+import com.github.dvdkruk.payslip.utils.TestAssert;
 import java.math.BigDecimal;
 import java.time.Month;
 import org.junit.Test;

@@ -3,8 +3,6 @@
  */
 package com.github.dvdkruk.payslip.core;
 
-import com.github.dvdkruk.payslip.model.Employee;
-import com.github.dvdkruk.payslip.model.PayslipRequest;
 import java.math.BigDecimal;
 import java.time.Month;
 import java.util.Arrays;

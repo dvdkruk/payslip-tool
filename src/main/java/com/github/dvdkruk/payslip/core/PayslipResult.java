@@ -1,8 +1,10 @@
 /**
  * Copyright (c) 2017, Damiaan van der Kruk.
  */
-package com.github.dvdkruk.payslip.model;
 
+package com.github.dvdkruk.payslip.core;
+
+import com.github.dvdkruk.payslip.utils.CommaSeparatedStringBuilder;
 import java.time.Month;
 import java.time.Year;
 import java.time.format.TextStyle;

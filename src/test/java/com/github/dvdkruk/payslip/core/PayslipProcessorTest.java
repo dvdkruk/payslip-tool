@@ -3,9 +3,7 @@
  */
 package com.github.dvdkruk.payslip.core;
 
-import com.github.dvdkruk.payslip.TestAssert;
-import com.github.dvdkruk.payslip.model.Employee;
-import com.github.dvdkruk.payslip.model.PayslipRequest;
+import com.github.dvdkruk.payslip.utils.TestAssert;
 import com.google.inject.Guice;
 import java.math.BigDecimal;
 import java.time.Month;

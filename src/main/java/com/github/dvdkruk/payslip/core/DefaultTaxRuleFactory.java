@@ -2,10 +2,8 @@
  * Copyright (c) 2017, Damiaan van der Kruk.
  */
 
-package com.github.dvdkruk.payslip.model;
+package com.github.dvdkruk.payslip.core;
 
-import com.github.dvdkruk.payslip.core.ITaxRule;
-import com.github.dvdkruk.payslip.core.ITaxRuleFactory;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,12 +15,12 @@ import java.util.List;
  * @version $Id$
  * @since 1.0
  */
-public final class DefaultTaxRuleFactory implements ITaxRuleFactory {
+public final class DefaultTaxRuleFactory {
 
     /**
      * Default Australia tax rule set, year 2017.
      */
-    private static final List<ITaxRule> DEFAULT = Collections.unmodifiableList(
+    public static final List<TaxRule> DEFAULT = Collections.unmodifiableList(
         Arrays.asList(
             new TaxRule(18200, 0, BigDecimal.ZERO),
             new TaxRule(37000, 0, new BigDecimal("0.190")),
@@ -32,8 +30,8 @@ public final class DefaultTaxRuleFactory implements ITaxRuleFactory {
         )
     );
 
-    @Override
-    public List<ITaxRule> getTaxRules() {
-        return DefaultTaxRuleFactory.DEFAULT;
-    }
+    /**
+     * Bla.
+     */
+    private DefaultTaxRuleFactory() { }
 }

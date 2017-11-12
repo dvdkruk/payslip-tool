@@ -4,10 +4,6 @@
 
 package com.github.dvdkruk.payslip.core;
 
-import com.github.dvdkruk.payslip.model.Employee;
-import com.github.dvdkruk.payslip.model.FinancialInformation;
-import com.github.dvdkruk.payslip.model.PayslipRequest;
-import com.github.dvdkruk.payslip.model.PayslipResult;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Month;
@@ -71,16 +67,14 @@ public final class PayslipProcessor {
     /**
      * List containing all the income tax rules for the calculation.
      */
-    private final List<ITaxRule> rules;
+    private final List<TaxRule> rules;
 
     /**
      * Create a {@link PayslipProcessor} with the {@code factory}.
-     *
-     * @param factory A tax rule factory.
      */
     @Inject
-    public PayslipProcessor(final ITaxRuleFactory factory) {
-        this.rules = factory.getTaxRules();
+    public PayslipProcessor() {
+        this.rules = DefaultTaxRuleFactory.DEFAULT;
     }
 
     /**
@@ -209,7 +203,7 @@ public final class PayslipProcessor {
      * @return Tax in complete/whole digits.
      */
     private int calculateTax(final int salary) {
-        final ITaxRule rule = this.rules.get(0);
+        final TaxRule rule = this.rules.get(0);
         final int tax;
         if (salary > rule.getMax()) {
             tax = this.calculateTax(salary, 1, rule.getMax());
@@ -239,7 +233,7 @@ public final class PayslipProcessor {
             );
             throw new NoSuchElementException(msg);
         }
-        final ITaxRule rule = this.rules.get(index);
+        final TaxRule rule = this.rules.get(index);
         final int tax;
         if (salary > rule.getMax()) {
             tax = this.calculateTax(salary, index + 1, rule.getMax());
@@ -258,7 +252,7 @@ public final class PayslipProcessor {
      * @param rule The rule for calculating the tax.
      * @return Tax in complete/whole dollars.
      */
-    private static int calculateTax(final int salary, final ITaxRule rule) {
+    private static int calculateTax(final int salary, final TaxRule rule) {
         final RoundingMode rounding = RoundingMode.HALF_UP;
         return BigDecimal.valueOf(salary)
             .multiply(rule.getTax())

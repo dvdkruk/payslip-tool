@@ -2,7 +2,7 @@
  * Copyright (c) 2017, Damiaan van der Kruk.
  */
 
-package com.github.dvdkruk.payslip.model;
+package com.github.dvdkruk.payslip.utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * @version $Id$
  * @since 1.0
  */
-final class CommaSeparatedStringBuilder implements Appendable {
+public final class CommaSeparatedStringBuilder implements Appendable {
 
     /**
      * Default size for {@link  CommaSeparatedStringBuilder#elements}.
@@ -29,7 +29,7 @@ final class CommaSeparatedStringBuilder implements Appendable {
     /**
      * Create a {@link CommaSeparatedStringBuilder}.
      */
-    CommaSeparatedStringBuilder() {
+    public CommaSeparatedStringBuilder() {
         this.elements =
             new ArrayList<>(CommaSeparatedStringBuilder.DEFAULT_SIZE);
     }

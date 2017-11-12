@@ -3,8 +3,6 @@
  */
 package com.github.dvdkruk.payslip.core;
 
-import com.github.dvdkruk.payslip.model.PayslipRequest;
-import com.github.dvdkruk.payslip.model.PayslipResult;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
