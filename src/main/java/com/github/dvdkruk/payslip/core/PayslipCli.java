@@ -3,9 +3,11 @@
  */
 package com.github.dvdkruk.payslip.core;
 
-import com.github.dvdkruk.payslip.model.DefaultTaxRuleFactory;
 import com.github.dvdkruk.payslip.model.PayslipRequest;
 import com.github.dvdkruk.payslip.model.PayslipResult;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import java.io.Console;
 import java.io.PrintWriter;
 import java.util.logging.Level;
@@ -26,20 +28,25 @@ final class PayslipCli {
         Logger.getLogger(PayslipCli.class.getName());
 
     /**
-     * Default factory.
-     */
-    private static final ITaxRuleFactory FACTORY = new DefaultTaxRuleFactory();
-
-    /**
      * Payslip processor.
      */
-    private final PayslipProcessor processor =
-        new PayslipProcessor(FACTORY.getTaxRules());
+    private final PayslipProcessor processor;
 
     /**
      * System console.
      */
-    private final Console console = System.console();
+    private final Console console;
+
+    /**
+     * Constructor.
+     *
+     * @param processor A processor.
+     */
+    @Inject
+    PayslipCli(final PayslipProcessor processor) {
+        this.console = System.console();
+        this.processor = processor;
+    }
 
     /**
      * Main method for starting the CLI.
@@ -47,7 +54,9 @@ final class PayslipCli {
      * @param args Program arguments.
      */
     public static void main(final String... args) {
-        new PayslipCli().start(args);
+        final Injector injector = Guice.createInjector();
+        final PayslipCli cli = injector.getInstance(PayslipCli.class);
+        cli.start(args);
     }
 
     /**

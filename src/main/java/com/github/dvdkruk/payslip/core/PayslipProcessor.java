@@ -13,6 +13,7 @@ import java.math.RoundingMode;
 import java.time.Month;
 import java.util.List;
 import java.util.NoSuchElementException;
+import javax.inject.Inject;
 
 /**
  * Payslip processor - Processes {@code PayslipRequest} instance to {@code
@@ -73,12 +74,13 @@ public final class PayslipProcessor {
     private final List<ITaxRule> rules;
 
     /**
-     * Create a {@link PayslipProcessor} with the {@code rules}.
+     * Create a {@link PayslipProcessor} with the {@code factory}.
      *
-     * @param rules A list of tax rules.
+     * @param factory A tax rule factory.
      */
-    public PayslipProcessor(final List<ITaxRule> rules) {
-        this.rules = rules;
+    @Inject
+    public PayslipProcessor(final ITaxRuleFactory factory) {
+        this.rules = factory.getTaxRules();
     }
 
     /**

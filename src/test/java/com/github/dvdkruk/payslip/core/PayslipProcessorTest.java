@@ -4,9 +4,9 @@
 package com.github.dvdkruk.payslip.core;
 
 import com.github.dvdkruk.payslip.TestAssert;
-import com.github.dvdkruk.payslip.model.DefaultTaxRuleFactory;
 import com.github.dvdkruk.payslip.model.Employee;
 import com.github.dvdkruk.payslip.model.PayslipRequest;
+import com.google.inject.Guice;
 import java.math.BigDecimal;
 import java.time.Month;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,11 +21,6 @@ import org.junit.jupiter.params.provider.ValueSource;
  * @since 1.0
  */
 final class PayslipProcessorTest {
-
-    /**
-     * A tax rule factory.
-     */
-    private static final ITaxRuleFactory FACTORY = new DefaultTaxRuleFactory();
 
     /**
      * A valid forename.
@@ -56,7 +51,8 @@ final class PayslipProcessorTest {
      */
     @BeforeEach
     public void init() {
-        this.processor = new PayslipProcessor(FACTORY.getTaxRules());
+        this.processor = Guice.createInjector()
+            .getInstance(PayslipProcessor.class);
     }
 
     /**
