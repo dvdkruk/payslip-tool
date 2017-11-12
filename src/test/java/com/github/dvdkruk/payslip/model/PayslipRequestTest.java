@@ -9,7 +9,7 @@ import java.time.Month;
 import org.junit.Test;
 
 /**
- * Unit test for {@link PayslipRequest}.
+ * Unit tests for {@link PayslipRequest}.
  * @author Damiaan Van Der Kruk (Damiaan.van.der.Kruk@gmail.com)
  * @version $Id$
  * @since 1.0

@@ -11,7 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 /**
- * Contains unit tests for {@link PayslipRequestParser}.
+ * Unit tests for {@link PayslipRequestParser}.
  * @author Damiaan Van Der Kruk (Damiaan.van.der.Kruk@gmail.com)
  * @version $Id$
  * @since 1.0

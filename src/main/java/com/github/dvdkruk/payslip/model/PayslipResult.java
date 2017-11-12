@@ -3,6 +3,7 @@
  */
 package com.github.dvdkruk.payslip.model;
 
+import com.github.dvdkruk.payslip.CommaSeparatedStringBuilder;
 import java.time.Month;
 import java.time.Year;
 import java.time.format.TextStyle;
@@ -18,11 +19,6 @@ import java.util.Objects;
  * @since 1.0
  */
 public class PayslipResult {
-
-    /**
-     * Separator used in the string representation of payslip results.
-     */
-    private static final String SEPARATOR = ",";
 
     /**
      * Full name.
@@ -140,15 +136,13 @@ public class PayslipResult {
 
     @Override
     public final String toString() {
-        return new StringBuilder(this.name)
-            .append(PayslipResult.SEPARATOR)
-            .append("01 ").append(this.getMonthName())
-            .append(" - ").append(this.month.length(Year.now().isLeap()))
-            .append(" ").append(this.getMonthName())
-            .append(PayslipResult.SEPARATOR).append(this.getSalary())
-            .append(PayslipResult.SEPARATOR).append(this.getTax())
-            .append(PayslipResult.SEPARATOR).append(this.getNetIncome())
-            .append(PayslipResult.SEPARATOR).append(this.getSuperannuation())
+        return new CommaSeparatedStringBuilder()
+            .append(this.getName())
+            .append(this.getDisplayMonth())
+            .append(this.getSalary())
+            .append(this.getTax())
+            .append(this.getNetIncome())
+            .append(this.getSuperannuation())
             .toString();
     }
 
@@ -159,6 +153,19 @@ public class PayslipResult {
      */
     private String getMonthName() {
         return this.month.getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+    }
+
+    /**
+     * Display string of {@link PayslipResult#month}.
+     *
+     * @return Display string of {@link PayslipResult#month}.
+     */
+    private String getDisplayMonth() {
+        return String.format(
+            "01 %s - %s %1$s",
+            this.getMonthName(),
+            this.month.length(Year.now().isLeap())
+        );
     }
 }
 

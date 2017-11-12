@@ -3,6 +3,7 @@
  */
 package com.github.dvdkruk.payslip.model;
 
+import com.github.dvdkruk.payslip.CommaSeparatedStringBuilder;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -19,10 +20,6 @@ import java.util.Objects;
  * @since 1.0
  */
 public class PayslipRequest {
-    /**
-     * Separator used in the string representation.
-     */
-    private static final String SEPARATOR = ",";
 
     /**
      * Employee.
@@ -55,12 +52,12 @@ public class PayslipRequest {
 
     @Override
     public final String toString() {
-        return new StringBuilder(this.getForename())
-            .append(PayslipRequest.SEPARATOR).append(this.getSurname())
-            .append(PayslipRequest.SEPARATOR).append(this.getDisplaySalary())
-            .append(PayslipRequest.SEPARATOR).append(this.getDisplaySuperRate())
-            .append("%")
-            .append(PayslipRequest.SEPARATOR).append(this.getDisplayMonthName())
+        return new CommaSeparatedStringBuilder()
+            .append(this.getForename())
+            .append(this.getSurname())
+            .append(this.getDisplaySalary())
+            .append(this.getDisplaySuperRate())
+            .append(this.getDisplayMonthName())
             .toString();
     }
 
@@ -149,12 +146,12 @@ public class PayslipRequest {
     }
 
     /**
-     * Display superannuation with two decimals.
+     * Display superannuation with two decimals and % character.
      *
-     * @return Display superannuation with two decimals.
+     * @return Display superannuation with two decimals and % character.
      */
     private String getDisplaySuperRate() {
-        return getTwoDecimalFormat().format(this.rate);
+        return String.format("%s%%", getTwoDecimalFormat().format(this.rate));
     }
 
     /**
