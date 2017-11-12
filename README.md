@@ -1,4 +1,4 @@
-# Payslip-Tool
+# Payslip-Tool [![codebeat badge](https://codebeat.co/badges/329e85ac-1113-49db-a2d2-29b2125ffd88)](https://codebeat.co/projects/github-com-dvdkruk-payslip-tool-qulice)
 A simple console application for calculation of monthly payslips.
 
 ## How To Build and Run
