@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2017, Damiaan van der Kruk.
  */
+
 package com.github.dvdkruk.payslip.model;
 
 import java.math.BigDecimal;
@@ -12,7 +13,7 @@ import java.math.BigDecimal;
  * @version $Id$
  * @since 1.0
  */
-public class TaxRule {
+public class TaxRule implements ITaxRule {
 
     /**
      * Max/upper bound of this rule.
@@ -42,29 +43,17 @@ public class TaxRule {
         this.tax = tax;
     }
 
-    /**
-     * Max/upper rule bound.
-     *
-     * @return Max/upper rule bound.
-     */
+    @Override
     public final int getMax() {
         return this.max;
     }
 
-    /**
-     * Base tax amount up to this rule.
-     *
-     * @return Base tax amount up to this rule.
-     */
+    @Override
     public final int getBase() {
         return this.base;
     }
 
-    /**
-     * Tax percentage.
-     *
-     * @return Tax percentage.
-     */
+    @Override
     public final BigDecimal getTax() {
         return this.tax;
     }

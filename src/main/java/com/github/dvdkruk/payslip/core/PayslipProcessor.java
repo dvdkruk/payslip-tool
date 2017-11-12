@@ -6,14 +6,12 @@ package com.github.dvdkruk.payslip.core;
 
 import com.github.dvdkruk.payslip.model.Employee;
 import com.github.dvdkruk.payslip.model.FinancialInformation;
+import com.github.dvdkruk.payslip.model.ITaxRule;
 import com.github.dvdkruk.payslip.model.PayslipRequest;
 import com.github.dvdkruk.payslip.model.PayslipResult;
-import com.github.dvdkruk.payslip.model.TaxRule;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Month;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -52,19 +50,6 @@ public final class PayslipProcessor {
      */
     public static final String INVAL_SUPER_RATE =
         "Super rate must be between 0% - 50%";
-    /**
-     * Default Australia tax rule set, year 2017.
-     */
-    public static final List<TaxRule> DEFAULT_RULES =
-        Collections.unmodifiableList(
-            Arrays.asList(
-                new TaxRule(18200, 0, BigDecimal.ZERO),
-                new TaxRule(37000, 0, new BigDecimal("0.190")),
-                new TaxRule(80000, 3572, new BigDecimal("0.325")),
-                new TaxRule(180000, 17547, new BigDecimal("0.37")),
-                new TaxRule(Integer.MAX_VALUE, 54547, new BigDecimal("0.45"))
-            )
-        );
 
     /**
      * Amount of months.
@@ -86,14 +71,13 @@ public final class PayslipProcessor {
     /**
      * List containing all the income tax rules for the calculation.
      */
-    private final List<TaxRule> rules;
+    private final List<ITaxRule> rules;
 
     /**
-     * Create a {@link PayslipProcessor} with the {@link
-     *  PayslipProcessor#DEFAULT_RULES}.
+     * Create a {@link PayslipProcessor} with the {@link ITaxRule#DEFAULT}.
      */
     public PayslipProcessor() {
-        this.rules = PayslipProcessor.DEFAULT_RULES;
+        this.rules = ITaxRule.DEFAULT;
     }
 
     /**
@@ -222,7 +206,7 @@ public final class PayslipProcessor {
      * @return Tax in complete/whole digits.
      */
     private int calculateTax(final int salary) {
-        final TaxRule rule = this.rules.get(0);
+        final ITaxRule rule = this.rules.get(0);
         final int tax;
         if (salary > rule.getMax()) {
             tax = this.calculateTax(salary, 1, rule.getMax());
@@ -252,7 +236,7 @@ public final class PayslipProcessor {
             );
             throw new NoSuchElementException(msg);
         }
-        final TaxRule rule = this.rules.get(index);
+        final ITaxRule rule = this.rules.get(index);
         final int tax;
         if (salary > rule.getMax()) {
             tax = this.calculateTax(salary, index + 1, rule.getMax());
@@ -271,7 +255,7 @@ public final class PayslipProcessor {
      * @param rule The rule for calculating the tax.
      * @return Tax in complete/whole dollars.
      */
-    private static int calculateTax(final int salary, final TaxRule rule) {
+    private static int calculateTax(final int salary, final ITaxRule rule) {
         final RoundingMode rounding = RoundingMode.HALF_UP;
         return BigDecimal.valueOf(salary)
             .multiply(rule.getTax())
