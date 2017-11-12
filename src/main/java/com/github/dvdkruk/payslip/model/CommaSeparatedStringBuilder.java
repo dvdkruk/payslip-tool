@@ -1,7 +1,8 @@
 /**
  * Copyright (c) 2017, Damiaan van der Kruk.
  */
-package com.github.dvdkruk.payslip.core;
+
+package com.github.dvdkruk.payslip.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
  * @version $Id$
  * @since 1.0
  */
-public final class CommaSeparatedStringBuilder {
+final class CommaSeparatedStringBuilder {
 
     /**
      * Default size for {@link  CommaSeparatedStringBuilder#elements}.
@@ -28,7 +29,7 @@ public final class CommaSeparatedStringBuilder {
     /**
      * Create a {@link CommaSeparatedStringBuilder}.
      */
-    public CommaSeparatedStringBuilder() {
+    CommaSeparatedStringBuilder() {
         this.elements =
             new ArrayList<>(CommaSeparatedStringBuilder.DEFAULT_SIZE);
     }

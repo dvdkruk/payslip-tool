@@ -3,7 +3,6 @@
  */
 package com.github.dvdkruk.payslip.model;
 
-import com.github.dvdkruk.payslip.core.CommaSeparatedStringBuilder;
 import java.math.BigDecimal;
 import java.util.Objects;
 
