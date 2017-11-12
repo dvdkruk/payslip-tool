@@ -4,12 +4,8 @@
 
 package com.github.dvdkruk.payslip.core;
 
-import com.github.dvdkruk.payslip.utils.CommaSeparatedStringBuilder;
 import java.time.Month;
 import java.time.Year;
-import java.time.format.TextStyle;
-import java.util.Locale;
-import java.util.Objects;
 
 /**
  * Represent a payslip result - Result of a successfully processed
@@ -19,7 +15,7 @@ import java.util.Objects;
  * @version $Id$
  * @since 1.0
  */
-public final class PayslipResult {
+public final class PayslipResult extends PayslipObject {
 
     /**
      * Full name.
@@ -47,6 +43,7 @@ public final class PayslipResult {
         final String name,
         final Month month,
         final FinancialInformation financial) {
+        super(name, toDisplayMonthRange(month), financial);
         this.name = name;
         this.month = month;
         this.financial = financial;
@@ -106,69 +103,17 @@ public final class PayslipResult {
         return this.financial.getSuperannuation();
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        final boolean equals;
-        if (this == obj) {
-            equals = true;
-        } else if (obj == null || this.getClass() != obj.getClass()) {
-            equals = false;
-        } else {
-            final PayslipResult that = (PayslipResult) obj;
-            equals = Objects.equals(this.name, that.name)
-                && Objects.equals(this.financial, that.financial)
-                && this.month == that.month;
-        }
-        return equals;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.name, this.month, this.financial);
-    }
-
-    @Override
-    public String toString() {
-        final CommaSeparatedStringBuilder builder =
-            new CommaSeparatedStringBuilder();
-        builder.append(this.name);
-        builder.append(this.getDisplayMonth());
-        this.appendFinancialInformation(builder);
-        return builder.toString();
-    }
-
-    /**
-     * Adds {@link PayslipResult#financial} information to {@code builder}.
-     *
-     * @param builder A {@link CommaSeparatedStringBuilder}.
-     */
-    private void appendFinancialInformation(
-        final CommaSeparatedStringBuilder builder) {
-        builder.append(this.getSalary());
-        builder.append(this.getTax());
-        builder.append(this.getNetIncome());
-        builder.append(this.getSuperannuation());
-    }
-
-    /**
-     * Full month name in English.
-     *
-     * @return Full month name in English.
-     */
-    private String getMonthName() {
-        return this.month.getDisplayName(TextStyle.FULL, Locale.ENGLISH);
-    }
-
     /**
      * Display string of {@link PayslipResult#month}.
      *
+     * @param month Month.
      * @return Display string of {@link PayslipResult#month}.
      */
-    private String getDisplayMonth() {
+    private static String toDisplayMonthRange(final Month month) {
         return String.format(
             "01 %s - %s %1$s",
-            this.getMonthName(),
-            this.month.length(Year.now().isLeap())
+            toDisplayMonth(month),
+            month.length(Year.now().isLeap())
         );
     }
 

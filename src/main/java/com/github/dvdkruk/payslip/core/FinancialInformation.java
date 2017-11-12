@@ -4,9 +4,6 @@
 
 package com.github.dvdkruk.payslip.core;
 
-import com.github.dvdkruk.payslip.utils.CommaSeparatedStringBuilder;
-import java.util.Objects;
-
 /**
  * Contains financial information for a month.
  *
@@ -14,7 +11,7 @@ import java.util.Objects;
  * @version $Id$
  * @since 1.0
  */
-public final class FinancialInformation {
+public final class FinancialInformation extends PayslipObject {
 
     /**
      * Monthly salary.
@@ -42,6 +39,7 @@ public final class FinancialInformation {
         final int salary,
         final int tax,
         final int superannuation) {
+        super(salary, tax, salary - tax, superannuation);
         this.salary = salary;
         this.tax = tax;
         this.superann = superannuation;
@@ -83,33 +81,4 @@ public final class FinancialInformation {
         return this.superann;
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        final boolean equal;
-        if (this == obj) {
-            equal = true;
-        } else if (obj == null || getClass() != obj.getClass()) {
-            equal = false;
-        } else {
-            final FinancialInformation that = (FinancialInformation) obj;
-            equal = this.salary == that.salary
-                && this.tax == that.tax
-                && this.superann == that.superann;
-        }
-        return equal;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.salary, this.tax, this.superann);
-    }
-
-    @Override
-    public String toString() {
-        return new CommaSeparatedStringBuilder()
-            .append(this.salary)
-            .append(this.tax)
-            .append(this.superann)
-            .toString();
-    }
 }

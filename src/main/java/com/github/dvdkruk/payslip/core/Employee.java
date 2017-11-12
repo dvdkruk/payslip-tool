@@ -4,9 +4,7 @@
 
 package com.github.dvdkruk.payslip.core;
 
-import com.github.dvdkruk.payslip.utils.CommaSeparatedStringBuilder;
 import java.math.BigDecimal;
-import java.util.Objects;
 
 /**
  * Contains employee data.
@@ -15,7 +13,7 @@ import java.util.Objects;
  * @version $Id$
  * @since 1.0
  */
-public final class Employee {
+public final class Employee extends PayslipObject {
 
     /**
      * Employee's forename.
@@ -43,6 +41,7 @@ public final class Employee {
         final String forename,
         final String surname,
         final BigDecimal salary) {
+        super(forename, surname, toDisplaySalary(salary));
         this.forename = forename;
         this.surname = surname;
         this.salary = salary;
@@ -87,34 +86,13 @@ public final class Employee {
         return this.salary;
     }
 
-    @Override
-    public String toString() {
-        return new CommaSeparatedStringBuilder()
-            .append(this.forename)
-            .append(this.surname)
-            .append(this.salary.toString())
-            .toString();
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        final boolean equals;
-        if (this == obj)  {
-            equals = true;
-        } else if (obj == null || getClass() != obj.getClass()) {
-            equals = false;
-        } else {
-            final Employee that = (Employee) obj;
-            equals = Objects.equals(this.forename, that.forename)
-                && Objects.equals(this.surname, that.surname)
-                && Objects.equals(this.salary, that.salary);
-        }
-        return equals;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.forename, this.surname, this.salary);
+    /**
+     * Display annual salary without decimals/cents.
+     * @param salary Annual salary.
+     * @return Display annual salary without decimals/cents.
+     */
+    private static String toDisplaySalary(final BigDecimal salary) {
+        return createDecimalFormat(0).format(salary);
     }
 
 }
