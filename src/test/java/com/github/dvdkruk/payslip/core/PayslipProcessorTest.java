@@ -4,10 +4,12 @@
 package com.github.dvdkruk.payslip.core;
 
 import com.github.dvdkruk.payslip.TestAssert;
+import com.github.dvdkruk.payslip.model.DefaultTaxRuleFactory;
 import com.github.dvdkruk.payslip.model.Employee;
 import com.github.dvdkruk.payslip.model.PayslipRequest;
 import java.math.BigDecimal;
 import java.time.Month;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -18,7 +20,12 @@ import org.junit.jupiter.params.provider.ValueSource;
  * @version $Id$
  * @since 1.0
  */
-public class PayslipProcessorTest {
+final class PayslipProcessorTest {
+
+    /**
+     * A tax rule factory.
+     */
+    private static final ITaxRuleFactory FACTORY = new DefaultTaxRuleFactory();
 
     /**
      * A valid forename.
@@ -40,6 +47,19 @@ public class PayslipProcessorTest {
     );
 
     /**
+     * A processor.
+     */
+    private PayslipProcessor processor;
+
+    /**
+     * Init.
+     */
+    @BeforeEach
+    public void init() {
+        this.processor = new PayslipProcessor(FACTORY.getTaxRules());
+    }
+
+    /**
      * Checks that a {@link PayslipException} with message {@link
      * PayslipProcessor#INVAL_FORENAME} is thrown for invalid forenames.
      *
@@ -47,13 +67,13 @@ public class PayslipProcessorTest {
      */
     @ParameterizedTest
     @ValueSource(strings = {"", " "})
-    public final void invalidForenameTest(final String forename) {
-        final Employee employee = new Employee(
+    public void invalidForenameTest(final String forename) {
+        final Employee emply = new Employee(
             forename,
             PayslipProcessorTest.SURNAME,
             BigDecimal.TEN
         );
-        checkPayslipExceptionMsg(PayslipProcessor.INVAL_FORENAME, employee);
+        this.checkPayslipExceptionMsg(PayslipProcessor.INVAL_FORENAME, emply);
     }
 
     /**
@@ -64,13 +84,13 @@ public class PayslipProcessorTest {
      */
     @ParameterizedTest
     @ValueSource(strings = {"", " "})
-    public final void invalidSurnameTest(final String surname) {
+    public void invalidSurnameTest(final String surname) {
         final Employee employee = new Employee(
             PayslipProcessorTest.FORENAME,
             surname,
             BigDecimal.TEN
         );
-        checkPayslipExceptionMsg(PayslipProcessor.INVAL_SURNAME, employee);
+        this.checkPayslipExceptionMsg(PayslipProcessor.INVAL_SURNAME, employee);
     }
 
     /**
@@ -81,13 +101,13 @@ public class PayslipProcessorTest {
      */
     @ParameterizedTest
     @ValueSource(strings = {"-1", "0"})
-    public final void invalidSalaryTest(final String salary) {
+    public void invalidSalaryTest(final String salary) {
         final Employee employee =  new Employee(
             PayslipProcessorTest.FORENAME,
             PayslipProcessorTest.SURNAME,
             new BigDecimal(salary)
         );
-        checkPayslipExceptionMsg(PayslipProcessor.INVAL_SALARY, employee);
+        this.checkPayslipExceptionMsg(PayslipProcessor.INVAL_SALARY, employee);
     }
 
     /**
@@ -99,13 +119,13 @@ public class PayslipProcessorTest {
      */
     @ParameterizedTest
     @ValueSource(strings = {"-1", "50.1"})
-    public final void invalidSuperRateTest(final String rate) {
-        final PayslipRequest request = new PayslipRequest(
+    public void invalidSuperRateTest(final String rate) {
+        final PayslipRequest req = new PayslipRequest(
             PayslipProcessorTest.EMPLOYEE,
             new BigDecimal(rate),
             Month.JANUARY
         );
-        checkPayslipExceptionMsg(PayslipProcessor.INVAL_SUPER_RATE, request);
+        this.checkPayslipExceptionMsg(PayslipProcessor.INVAL_SUPER_RATE, req);
     }
 
     /**
@@ -117,10 +137,10 @@ public class PayslipProcessorTest {
      */
     @ParameterizedTest
     @CsvFileSource(resources = "PayslipProcessorExamples.csv")
-    public final void validateRequest(final String input, final String output) {
+    public void validateRequest(final String input, final String output) {
         final PayslipRequest request = new PayslipRequestParser(input)
             .toPayslipRequest();
-        new TestAssert<>(new PayslipProcessor().process(request).toString())
+        new TestAssert<>(this.processor.process(request).toString())
             .equalTo(output);
     }
 
@@ -134,7 +154,7 @@ public class PayslipProcessorTest {
      * @param employee The {@link Employee} object used in the
      *  {@link PayslipRequest}.
      */
-    private static void checkPayslipExceptionMsg(
+    private void checkPayslipExceptionMsg(
         final String expected,
         final Employee employee) {
         final PayslipRequest request = new PayslipRequest(
@@ -142,7 +162,7 @@ public class PayslipProcessorTest {
             BigDecimal.TEN,
             Month.JANUARY
         );
-        checkPayslipExceptionMsg(expected, request);
+        this.checkPayslipExceptionMsg(expected, request);
     }
 
     /**
@@ -152,12 +172,12 @@ public class PayslipProcessorTest {
      * @param expected Message expected by the thrown {@link PayslipException}.
      * @param request The request that needs to processed.
      */
-    private static void checkPayslipExceptionMsg(
+    private void checkPayslipExceptionMsg(
         final String expected,
         final PayslipRequest request) {
         PayslipException exception = null;
         try {
-            new PayslipProcessor().process(request);
+            this.processor.process(request);
         } catch (final PayslipException psx) {
             exception = psx;
         }

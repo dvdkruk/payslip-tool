@@ -6,7 +6,6 @@ package com.github.dvdkruk.payslip.core;
 
 import com.github.dvdkruk.payslip.model.Employee;
 import com.github.dvdkruk.payslip.model.FinancialInformation;
-import com.github.dvdkruk.payslip.model.ITaxRule;
 import com.github.dvdkruk.payslip.model.PayslipRequest;
 import com.github.dvdkruk.payslip.model.PayslipResult;
 import java.math.BigDecimal;
@@ -74,10 +73,12 @@ public final class PayslipProcessor {
     private final List<ITaxRule> rules;
 
     /**
-     * Create a {@link PayslipProcessor} with the {@link ITaxRule#DEFAULT}.
+     * Create a {@link PayslipProcessor} with the {@code rules}.
+     *
+     * @param rules A list of tax rules.
      */
-    public PayslipProcessor() {
-        this.rules = ITaxRule.DEFAULT;
+    public PayslipProcessor(final List<ITaxRule> rules) {
+        this.rules = rules;
     }
 
     /**

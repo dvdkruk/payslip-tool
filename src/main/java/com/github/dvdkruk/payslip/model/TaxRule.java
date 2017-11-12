@@ -4,6 +4,7 @@
 
 package com.github.dvdkruk.payslip.model;
 
+import com.github.dvdkruk.payslip.core.ITaxRule;
 import java.math.BigDecimal;
 
 /**

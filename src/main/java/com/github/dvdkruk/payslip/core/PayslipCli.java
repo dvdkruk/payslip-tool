@@ -3,6 +3,7 @@
  */
 package com.github.dvdkruk.payslip.core;
 
+import com.github.dvdkruk.payslip.model.DefaultTaxRuleFactory;
 import com.github.dvdkruk.payslip.model.PayslipRequest;
 import com.github.dvdkruk.payslip.model.PayslipResult;
 import java.io.Console;
@@ -25,9 +26,15 @@ final class PayslipCli {
         Logger.getLogger(PayslipCli.class.getName());
 
     /**
+     * Default factory.
+     */
+    private static final ITaxRuleFactory FACTORY = new DefaultTaxRuleFactory();
+
+    /**
      * Payslip processor.
      */
-    private final PayslipProcessor processor = new PayslipProcessor();
+    private final PayslipProcessor processor =
+        new PayslipProcessor(FACTORY.getTaxRules());
 
     /**
      * System console.

@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * @version $Id$
  * @since 1.0
  */
-final class CommaSeparatedStringBuilder {
+final class CommaSeparatedStringBuilder implements Appendable {
 
     /**
      * Default size for {@link  CommaSeparatedStringBuilder#elements}.
@@ -24,7 +24,7 @@ final class CommaSeparatedStringBuilder {
     /**
      * Create an comma separated string for these elements.
      */
-    private final List<String> elements;
+    private final List<CharSequence> elements;
 
     /**
      * Create a {@link CommaSeparatedStringBuilder}.
@@ -32,17 +32,6 @@ final class CommaSeparatedStringBuilder {
     CommaSeparatedStringBuilder() {
         this.elements =
             new ArrayList<>(CommaSeparatedStringBuilder.DEFAULT_SIZE);
-    }
-
-    /**
-     * Appends {@code element} to the comma separated string.
-     *
-     * @param element Append this string to the comma separated string.
-     * @return This builder.
-     */
-    public CommaSeparatedStringBuilder append(final String element) {
-        this.elements.add(element);
-        return this;
     }
 
     /**
@@ -58,5 +47,24 @@ final class CommaSeparatedStringBuilder {
     @Override
     public String toString() {
         return this.elements.stream().collect(Collectors.joining(","));
+    }
+
+    @Override
+    public CommaSeparatedStringBuilder append(final CharSequence csq) {
+        this.elements.add(csq);
+        return this;
+    }
+
+    @Override
+    public CommaSeparatedStringBuilder append(
+        final CharSequence csq,
+        final int start,
+        final int end) {
+        return this.append(csq.subSequence(start, end));
+    }
+
+    @Override
+    public CommaSeparatedStringBuilder append(final char character) {
+        return this.append(String.valueOf(character));
     }
 }

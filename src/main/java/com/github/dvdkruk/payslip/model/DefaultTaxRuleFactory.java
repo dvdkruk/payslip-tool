@@ -4,24 +4,25 @@
 
 package com.github.dvdkruk.payslip.model;
 
+import com.github.dvdkruk.payslip.core.ITaxRule;
+import com.github.dvdkruk.payslip.core.ITaxRuleFactory;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * Represents an income tax rule for tax calculations used in
- * {@code PayslipProcessor}.
+ * DefaultTaxRuleFactory.
  * @author Damiaan Van Der Kruk (Damiaan.van.der.Kruk@gmail.com)
  * @version $Id$
  * @since 1.0
  */
-public interface ITaxRule {
+public final class DefaultTaxRuleFactory implements ITaxRuleFactory {
 
     /**
      * Default Australia tax rule set, year 2017.
      */
-    List<ITaxRule> DEFAULT = Collections.unmodifiableList(
+    private static final List<ITaxRule> DEFAULT = Collections.unmodifiableList(
         Arrays.asList(
             new TaxRule(18200, 0, BigDecimal.ZERO),
             new TaxRule(37000, 0, new BigDecimal("0.190")),
@@ -31,25 +32,8 @@ public interface ITaxRule {
         )
     );
 
-    /**
-     * Max/upper rule bound.
-     *
-     * @return Max/upper rule bound.
-     */
-    int getMax();
-
-    /**
-     * Base tax amount up to this rule.
-     *
-     * @return Base tax amount up to this rule.
-     */
-    int getBase();
-
-    /**
-     * Tax percentage.
-     *
-     * @return Tax percentage.
-     */
-    BigDecimal getTax();
-
+    @Override
+    public List<ITaxRule> getTaxRules() {
+        return DefaultTaxRuleFactory.DEFAULT;
+    }
 }
