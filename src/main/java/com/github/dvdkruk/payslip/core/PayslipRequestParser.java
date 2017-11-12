@@ -15,7 +15,7 @@ import java.util.Locale;
  * @version $Id$
  * @since 1.0
  */
-public class PayslipRequestParser {
+public final class PayslipRequestParser {
     /**
      * Parse token length.
      */
@@ -91,7 +91,7 @@ public class PayslipRequestParser {
      * @throws PayslipException When {@link PayslipRequestParser#line} is not
      *  parsable.
      */
-    public final PayslipRequest toPayslipRequest() {
+    public PayslipRequest toPayslipRequest() {
         if (this.line == null) {
             throw new PayslipException("null");
         }

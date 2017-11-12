@@ -13,7 +13,7 @@ import java.math.BigDecimal;
  * @version $Id$
  * @since 1.0
  */
-public class TaxRule {
+public final class TaxRule extends PayslipObject {
 
     /**
      * Max/upper bound of this rule.
@@ -38,6 +38,7 @@ public class TaxRule {
      * @param tax Tax rule percentage.
      */
     public TaxRule(final int max, final int base, final BigDecimal tax) {
+        super(max, base, tax);
         this.max = max;
         this.base = base;
         this.tax = tax;
@@ -47,7 +48,7 @@ public class TaxRule {
      * Max/upper bound of this rule.
      * @return Max/upper bound of this rule.
      */
-    public final int getMax() {
+    public int getMax() {
         return this.max;
     }
 
@@ -55,7 +56,7 @@ public class TaxRule {
      * Base tax up to this rule.
      * @return Base tax up to this rule.
      */
-    public final int getBase() {
+    public int getBase() {
         return this.base;
     }
 
@@ -63,7 +64,7 @@ public class TaxRule {
      * Tax rule percentage.
      * @return Tax rule percentage.
      */
-    public final BigDecimal getTax() {
+    public BigDecimal getTax() {
         return this.tax;
     }
 }
