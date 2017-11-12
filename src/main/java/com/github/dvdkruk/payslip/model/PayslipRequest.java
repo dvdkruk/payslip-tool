@@ -1,9 +1,10 @@
 /**
  * Copyright (c) 2017, Damiaan van der Kruk.
  */
+
 package com.github.dvdkruk.payslip.model;
 
-import com.github.dvdkruk.payslip.CommaSeparatedStringBuilder;
+import com.github.dvdkruk.payslip.core.CommaSeparatedStringBuilder;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;

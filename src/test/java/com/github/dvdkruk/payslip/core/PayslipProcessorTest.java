@@ -1,12 +1,11 @@
 /**
  * Copyright (c) 2017, Damiaan van der Kruk.
  */
-package com.github.dvdkruk.payslip;
+package com.github.dvdkruk.payslip.core;
 
+import com.github.dvdkruk.payslip.TestAssert;
 import com.github.dvdkruk.payslip.model.Employee;
-import com.github.dvdkruk.payslip.model.PayslipException;
 import com.github.dvdkruk.payslip.model.PayslipRequest;
-import com.github.dvdkruk.payslip.model.PayslipRequestParser;
 import java.math.BigDecimal;
 import java.time.Month;
 import org.junit.jupiter.params.ParameterizedTest;

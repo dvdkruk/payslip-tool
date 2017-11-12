@@ -1,8 +1,10 @@
 /**
  * Copyright (c) 2017, Damiaan van der Kruk.
  */
-package com.github.dvdkruk.payslip.model;
+package com.github.dvdkruk.payslip.core;
 
+import com.github.dvdkruk.payslip.model.Employee;
+import com.github.dvdkruk.payslip.model.PayslipRequest;
 import java.math.BigDecimal;
 import java.time.Month;
 import java.util.Arrays;

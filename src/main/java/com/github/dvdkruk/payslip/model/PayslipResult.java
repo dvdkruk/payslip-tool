@@ -3,7 +3,7 @@
  */
 package com.github.dvdkruk.payslip.model;
 
-import com.github.dvdkruk.payslip.CommaSeparatedStringBuilder;
+import com.github.dvdkruk.payslip.core.CommaSeparatedStringBuilder;
 import java.time.Month;
 import java.time.Year;
 import java.time.format.TextStyle;

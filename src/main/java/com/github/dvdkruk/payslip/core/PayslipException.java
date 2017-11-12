@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2017, Damiaan van der Kruk.
  */
-package com.github.dvdkruk.payslip.model;
+package com.github.dvdkruk.payslip.core;
 
 /**
  * A general exception for identifying errors in the Payslip tool.
